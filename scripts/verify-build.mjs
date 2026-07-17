@@ -32,7 +32,10 @@ for (const [file, expectedText, canonical] of pages) {
   assert.match(html, /<div id="root">\s*<(?!\/div>)/, `${file} must contain rendered HTML`)
   assert.match(html, /<h1[ >]/, `${file} must contain an H1 in the initial HTML`)
   assert.ok(html.includes(expectedText), `${file} must contain its page content`)
-  assert.ok(html.includes(`href="${canonical}"`), `${file} must contain its canonical URL`)
+  assert.ok(
+    html.includes(`<link rel="canonical" href="${canonical}" />`),
+    `${file} must contain its canonical link element`,
+  )
   assert.doesNotMatch(html, /\/src\/main\.tsx/, `${file} must reference production assets`)
 }
 

@@ -142,6 +142,62 @@ const essays: Essay[] = [
   },
 ]
 
+type RouteMetadata = {
+  pathname: string
+  title: string
+  description: string
+  type: 'website' | 'article' | 'profile'
+  canonical: string | null
+  noindex?: boolean
+}
+
+export const routeMetadata: RouteMetadata[] = [
+  {
+    pathname: '/',
+    title: 'caio.legal — AI leadership for law firms',
+    description: 'Practical AI leadership, training, and field notes for law firms.',
+    type: 'website',
+    canonical: 'https://caio.legal/',
+  },
+  ...essays.map((essay) => ({
+    pathname: `/notes/${essay.slug}`,
+    title: `${essay.title} — caio.legal`,
+    description: essay.deck,
+    type: 'article' as const,
+    canonical: `https://caio.legal/notes/${essay.slug}`,
+  })),
+  {
+    pathname: '/about',
+    title: 'About Ken Erwin — caio.legal',
+    description: 'Ken Erwin brings production AI, security, resilience, enterprise change, and legal product-building experience to AI leadership for law firms.',
+    type: 'profile',
+    canonical: 'https://caio.legal/about',
+  },
+  {
+    pathname: '/404',
+    title: 'Page not found — caio.legal',
+    description: 'The requested page could not be found.',
+    type: 'website',
+    canonical: null,
+    noindex: true,
+  },
+]
+
+function updateDocumentMetadata(pathname: string) {
+  const page = routeMetadata.find((route) => route.pathname === pathname)
+  if (!page) return
+
+  document.title = page.title
+  document.querySelector('meta[name="description"]')?.setAttribute('content', page.description)
+  document.querySelector('meta[property="og:title"]')?.setAttribute('content', page.title)
+  document.querySelector('meta[property="og:description"]')?.setAttribute('content', page.description)
+  document.querySelector('meta[property="og:type"]')?.setAttribute('content', page.type)
+
+  const canonical = document.querySelector('link[rel="canonical"]')
+  if (page.canonical) canonical?.setAttribute('href', page.canonical)
+  else canonical?.remove()
+}
+
 const notes = {
   use: {
     label: 'The operational reality',
@@ -466,12 +522,7 @@ function About() {
 function AboutPage() {
   useEffect(() => {
     window.scrollTo(0, 0)
-    document.title = 'About Ken Erwin — caio.legal'
-    document.querySelector('meta[name="description"]')?.setAttribute(
-      'content',
-      'Ken Erwin brings production AI, security, resilience, enterprise change, and legal product-building experience to AI leadership for law firms.',
-    )
-    document.querySelector('link[rel="canonical"]')?.setAttribute('href', 'https://caio.legal/about')
+    updateDocumentMetadata('/about')
   }, [])
 
   return (
@@ -648,11 +699,7 @@ function Footer() {
 
 function Home() {
   useEffect(() => {
-    document.title = 'caio.legal — AI leadership for law firms'
-    document.querySelector('meta[name="description"]')?.setAttribute(
-      'content',
-      'Practical AI leadership, training, and field notes for law firms.',
-    )
+    updateDocumentMetadata('/')
 
     const observer = new IntersectionObserver(
       (entries) => entries.forEach((entry) => entry.isIntersecting && entry.target.classList.add('is-visible')),
@@ -696,12 +743,7 @@ function ArticlePage({ essay }: { essay: Essay }) {
 
   useEffect(() => {
     window.scrollTo(0, 0)
-    document.title = `${essay.title} — caio.legal`
-    document.querySelector('meta[name="description"]')?.setAttribute('content', essay.deck)
-    document.querySelector('link[rel="canonical"]')?.setAttribute(
-      'href',
-      `https://caio.legal/notes/${essay.slug}`,
-    )
+    updateDocumentMetadata(`/notes/${essay.slug}`)
   }, [essay])
 
   useEffect(() => {
@@ -757,6 +799,8 @@ function ArticlePage({ essay }: { essay: Essay }) {
 }
 
 function NotFoundPage() {
+  useEffect(() => updateDocumentMetadata('/404'), [])
+
   return (
     <>
       <a className="skip-link" href="#not-found">Skip to content</a>
