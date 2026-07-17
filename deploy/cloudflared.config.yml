@@ -1,0 +1,11 @@
+tunnel: 88b2983f-dde3-4bc0-a626-fe61d1709c67
+credentials-file: /etc/cloudflared/credential.json
+protocol: http2
+
+ingress:
+  - hostname: caio.legal
+    service: http://host.docker.internal:3020
+  - hostname: www.caio.legal
+    service: http://host.docker.internal:3020
+  - service: http_status:404
+
