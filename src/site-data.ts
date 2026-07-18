@@ -37,7 +37,7 @@ const nistAiRmfPlaybook: Source = {
 }
 
 export const calendlyUrl = 'https://calendly.com/kenerwin/30min'
-export const contactEmail = 'hello@caio.legal'
+export const contactEmail = 'ken@caio.legal'
 export const siteUrl = 'https://caio.legal'
 
 const publishedDate = '2026-07-17'
@@ -304,7 +304,7 @@ const organizationSchema: SchemaNode = {
   name: 'caio.legal',
   url: `${siteUrl}/`,
   description: 'Independent AI leadership for law firms, including executive briefings, exposure assessment, and fractional CAIO support.',
-  email: 'hello@caio.legal',
+  email: 'ken@caio.legal',
   logo: {
     '@type': 'ImageObject',
     url: `${siteUrl}/favicon.svg`,
