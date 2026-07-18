@@ -23,6 +23,12 @@ const pages = [
     schemaTypes: ['ProfilePage', 'ProfessionalService', 'Person'],
   },
   {
+    file: 'briefings.html',
+    expectedText: 'Clear positions on the decisions AI is forcing law firms to make.',
+    canonical: `${siteUrl}/briefings`,
+    schemaTypes: ['CollectionPage', 'ItemList', 'BreadcrumbList', 'ProfessionalService', 'Person'],
+  },
+  {
     file: 'notes/your-best-ai-work-is-probably-hidden.html',
     expectedText: 'Your firm’s best AI workflow',
     canonical: `${siteUrl}/notes/your-best-ai-work-is-probably-hidden`,
@@ -118,6 +124,17 @@ for (const page of pages) {
     const profile = schemaNode(graph, 'ProfilePage')
     assert.equal(profile.mainEntity['@id'], personId, 'About profile must connect to Ken Erwin')
     assert.equal(profile.isPartOf['@id'], websiteId, 'About profile must connect to the website')
+  }
+
+  if (page.file === 'briefings.html') {
+    const collection = schemaNode(graph, 'CollectionPage')
+    assert.equal(collection.isPartOf['@id'], websiteId, 'Briefings collection must connect to the website')
+    const articlePages = pages.filter((item) => item.article)
+    assert.equal(collection.mainEntity.itemListElement.length, articlePages.length, 'Briefings list must include every article')
+    for (const articlePage of articlePages) {
+      const path = articlePage.canonical.replace(siteUrl, '')
+      assert.ok(html.includes(`href="${path}"`), `briefings.html must link to ${path}`)
+    }
   }
 
   if (page.article) {

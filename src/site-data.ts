@@ -36,6 +36,9 @@ const nistAiRmfPlaybook: Source = {
   url: 'https://www.nist.gov/itl/ai-risk-management-framework/nist-ai-rmf-playbook',
 }
 
+export const calendlyUrl = 'https://calendly.com/kenerwin/30min'
+export const contactEmail = 'hello@caio.legal'
+
 const publishedDate = '2026-07-17'
 const longDateFormatter = new Intl.DateTimeFormat('en-US', {
   month: 'long',
@@ -320,6 +323,16 @@ export const routeMetadata: RouteMetadata[] = [
     imageAlt: socialImageAlt,
     lastModified: publishedDate,
   },
+  {
+    pathname: '/briefings',
+    title: 'CAIO Briefings: AI Decisions Facing Law Firms | caio.legal',
+    description: 'Every caio.legal briefing on AI leadership, governance, firm economics, and adoption—clear positions on the decisions law firm leaders must now own.',
+    type: 'website',
+    canonical: `${siteUrl}/briefings`,
+    image: socialImageUrl,
+    imageAlt: socialImageAlt,
+    lastModified: publishedDate,
+  },
   ...essays.map((essay) => ({
     pathname: `/notes/${essay.slug}`,
     title: essay.seoTitle,
@@ -359,6 +372,44 @@ export function structuredDataForPath(pathname: string): SchemaNode | null {
     return {
       '@context': 'https://schema.org',
       '@graph': [...commonSchemaGraph(), ...serviceSchemas],
+    }
+  }
+
+  if (pathname === '/briefings') {
+    const briefingsUrl = `${siteUrl}/briefings`
+    return {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'CollectionPage',
+          '@id': `${briefingsUrl}#collection`,
+          url: briefingsUrl,
+          name: 'CAIO Briefings: AI Decisions Facing Law Firms',
+          description: 'Every caio.legal briefing on AI leadership, governance, firm economics, and adoption for law firms.',
+          isPartOf: { '@id': websiteId },
+          inLanguage: 'en-US',
+          dateModified: publishedDate,
+          mainEntity: {
+            '@type': 'ItemList',
+            '@id': `${briefingsUrl}#list`,
+            itemListElement: essays.map((essay, index) => ({
+              '@type': 'ListItem',
+              position: index + 1,
+              name: essay.title,
+              url: `${siteUrl}/notes/${essay.slug}`,
+            })),
+          },
+        },
+        {
+          '@type': 'BreadcrumbList',
+          '@id': `${briefingsUrl}#breadcrumb`,
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteUrl}/` },
+            { '@type': 'ListItem', position: 2, name: 'Briefings', item: briefingsUrl },
+          ],
+        },
+        ...commonSchemaGraph(),
+      ],
     }
   }
 
@@ -424,7 +475,7 @@ export function structuredDataForPath(pathname: string): SchemaNode | null {
         '@id': `${canonical}#breadcrumb`,
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteUrl}/` },
-          { '@type': 'ListItem', position: 2, name: 'Briefings', item: `${siteUrl}/#field-notes` },
+          { '@type': 'ListItem', position: 2, name: 'Briefings', item: `${siteUrl}/briefings` },
           { '@type': 'ListItem', position: 3, name: essay.title, item: canonical },
         ],
       },

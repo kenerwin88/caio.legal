@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { essays, formatDate, routeMetadata, type Essay } from './site-data'
+import { calendlyUrl, contactEmail, essays, formatDate, routeMetadata, type Essay } from './site-data'
 
 function setMetaContent(selector: string, content: string) {
   document.querySelector(selector)?.setAttribute('content', content)
@@ -78,7 +78,7 @@ function Arrow() {
   return <span aria-hidden="true">↗</span>
 }
 
-function Header({ page = 'home' }: { page?: 'home' | 'article' | 'about' }) {
+function Header({ page = 'home' }: { page?: 'home' | 'article' | 'about' | 'briefings' }) {
   return (
     <header className="site-header">
       <a className="brand" href="/" aria-label="caio.legal home">
@@ -86,58 +86,74 @@ function Header({ page = 'home' }: { page?: 'home' | 'article' | 'about' }) {
       </a>
       <nav aria-label="Main navigation">
         {page === 'article' ? (
-          <a href="/#field-notes">Briefings</a>
+          <a href="/briefings">Briefings</a>
         ) : page === 'about' ? (
           <>
             <a href="/#risk">Why CAIO</a>
             <a href="/#work">Advisory</a>
-            <a href="/#field-notes">Briefings</a>
+            <a href="/briefings">Briefings</a>
+          </>
+        ) : page === 'briefings' ? (
+          <>
+            <a href="/#work">Advisory</a>
+            <a href="/about">About Ken</a>
           </>
         ) : (
           <>
-            <a href="#field-notes">Briefings</a>
+            <a href="/briefings">Briefings</a>
             <a href="#work">Advisory</a>
             <a href="/about">About Ken</a>
           </>
         )}
       </nav>
-      <a className="header-cta" href="mailto:hello@caio.legal?subject=AI%20leadership%20for%20our%20firm">
+      <a className="header-cta" href={calendlyUrl} target="_blank" rel="noreferrer">
         Discuss your exposure <Arrow />
       </a>
     </header>
   )
 }
 
+const noteKeys = Object.keys(notes) as NoteKey[]
+
 function Hero() {
   const [activeNote, setActiveNote] = useState<NoteKey>('lead')
+  const [paused, setPaused] = useState(false)
+  const pickNote = (key: NoteKey) => {
+    setPaused(true)
+    setActiveNote(key)
+  }
   const setNote = (key: NoteKey) => ({
-    onMouseEnter: () => setActiveNote(key),
-    onFocus: () => setActiveNote(key),
-    onClick: () => setActiveNote(key),
+    onMouseEnter: () => pickNote(key),
+    onFocus: () => pickNote(key),
+    onClick: () => pickNote(key),
   })
+
+  useEffect(() => {
+    if (paused) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const advance = () => {
+      if (document.hidden) return
+      setActiveNote((current) => noteKeys[(noteKeys.indexOf(current) + 1) % noteKeys.length])
+    }
+    const interval = window.setInterval(advance, 5000)
+    return () => window.clearInterval(interval)
+  }, [paused])
 
   return (
     <section className="hero" aria-labelledby="hero-title">
       <div className="hero-kicker reveal">Independent AI leadership for law firms</div>
       <div className="hero-grid">
-        <div className="hero-copy">
-          <h1 id="hero-title" className="reveal reveal-delay-1">
-            AI is <button className={activeNote === 'use' ? 'active' : ''} {...setNote('use')}>already inside</button>{' '}
-            your firm. The question is whether{' '}
-            <button className={activeNote === 'lead' ? 'active' : ''} {...setNote('lead')}>anyone</button>{' '}
-            is <button className={activeNote === 'change' ? 'active' : ''} {...setNote('change')}>leading it.</button>
-          </h1>
-          <div className="hero-bottom reveal reveal-delay-2">
-            <p>
-              Clients are asking. Attorneys are experimenting. Vendors are multiplying. Without one accountable leader, the firm carries the risk while better-prepared competitors learn faster.
-            </p>
-            <div className="hero-actions">
-              <a className="button button-primary" href="mailto:hello@caio.legal?subject=Our%20firm%27s%20AI%20exposure">Discuss your exposure <Arrow /></a>
-              <a className="text-link" href="#risk">See what is at stake <span aria-hidden="true">↓</span></a>
-            </div>
-          </div>
-        </div>
-        <aside className="margin-note reveal reveal-delay-3" aria-live="polite">
+        <h1 id="hero-title" className="hero-headline reveal reveal-delay-1">
+          AI is <button className={activeNote === 'use' ? 'active' : ''} {...setNote('use')}>already inside</button>{' '}
+          your firm. The question is whether{' '}
+          <button className={activeNote === 'lead' ? 'active' : ''} {...setNote('lead')}>anyone</button>{' '}
+          is <button className={activeNote === 'change' ? 'active' : ''} {...setNote('change')}>leading it.</button>
+        </h1>
+        <aside
+          className="margin-note reveal reveal-delay-3"
+          aria-live={paused ? 'polite' : 'off'}
+          onMouseEnter={() => setPaused(true)}
+        >
           <div className="note-index">Margin note</div>
           <div className="note-mark" aria-hidden="true">*</div>
           <div className="note-content" key={activeNote}>
@@ -145,16 +161,25 @@ function Hero() {
             <p className="note-text">{notes[activeNote].text}</p>
           </div>
           <div className="note-tabs" aria-label="Hero annotations">
-            {(Object.keys(notes) as NoteKey[]).map((key) => (
+            {noteKeys.map((key) => (
               <button
                 key={key}
                 className={activeNote === key ? 'active' : ''}
-                onClick={() => setActiveNote(key)}
+                onClick={() => pickNote(key)}
                 aria-label={`Show note: ${notes[key].label}`}
               />
             ))}
           </div>
         </aside>
+        <div className="hero-bottom reveal reveal-delay-2">
+          <p>
+            Clients are asking. Attorneys are experimenting. Vendors are multiplying. Without one accountable leader, the firm carries the risk while better-prepared competitors learn faster.
+          </p>
+          <div className="hero-actions">
+            <a className="button button-primary" href={calendlyUrl} target="_blank" rel="noreferrer">Book a 30-minute conversation <Arrow /></a>
+            <a className="text-link" href="#risk">See what is at stake <span aria-hidden="true">↓</span></a>
+          </div>
+        </div>
       </div>
       <div className="hero-rule" aria-hidden="true" />
     </section>
@@ -202,7 +227,7 @@ function Friction() {
             <li>Where is confidential or client information entering them?</li>
             <li>Who has authority to stop, approve, or scale a use case?</li>
           </ul>
-          <a href="mailto:hello@caio.legal?subject=We%20need%20to%20understand%20our%20AI%20exposure">Start with a confidential conversation <Arrow /></a>
+          <a href={calendlyUrl} target="_blank" rel="noreferrer">Start with a confidential conversation <Arrow /></a>
         </div>
       </div>
     </section>
@@ -304,7 +329,7 @@ function Work() {
               <span className="service-audience">For firms that need leadership before they need a full-time CAIO</span>
             </article>
           </div>
-          <a className="button button-light" href="mailto:hello@caio.legal?subject=AI%20training%20or%20fractional%20leadership">
+          <a className="button button-light" href={calendlyUrl} target="_blank" rel="noreferrer">
             Tell me what your firm is navigating <Arrow />
           </a>
         </div>
@@ -320,7 +345,10 @@ function FieldNotes() {
       <div className="section-content">
         <div className="notes-heading reveal">
           <h2 id="notes-title">Advice for the decisions ahead.</h2>
-          <p>Clear positions on the choices AI is forcing law firm leaders to make.</p>
+          <div>
+            <p>Clear positions on the choices AI is forcing law firm leaders to make.</p>
+            <a className="notes-all" href="/briefings">View all briefings <Arrow /></a>
+          </div>
         </div>
         <div className="essay-list">
           {essays.map((essay, index) => (
@@ -528,9 +556,66 @@ function AboutPage() {
               <p>Attorneys own legal judgment and professional responsibility. I give firm leadership the technical and operating judgment to understand exposure, evaluate vendors, set policy, train the firm, and build an AI program attorneys can defend and sustain.</p>
             </aside>
             <div className="trust-links">
-              <a className="button button-primary" href="mailto:hello@caio.legal?subject=AI%20leadership%20for%20our%20firm">Discuss your firm <Arrow /></a>
+              <a className="button button-primary" href={calendlyUrl} target="_blank" rel="noreferrer">Discuss your firm <Arrow /></a>
               <a href="https://www.linkedin.com/in/kenerwin88/" target="_blank" rel="noreferrer">Review my LinkedIn background <Arrow /></a>
             </div>
+          </div>
+        </section>
+      </main>
+      <Footer />
+    </>
+  )
+}
+
+function BriefingsPage() {
+  useEffect(() => {
+    window.scrollTo(0, 0)
+    updateDocumentMetadata('/briefings')
+  }, [])
+
+  const topics = [...new Set(essays.map((essay) => essay.type))]
+
+  return (
+    <>
+      <a className="skip-link" href="#briefings">Skip to briefings</a>
+      <Header page="briefings" />
+      <main id="briefings" className="briefings-page">
+        <header className="briefings-hero">
+          <nav className="briefings-breadcrumb" aria-label="Breadcrumb">
+            <a href="/">Home</a>
+            <span aria-hidden="true">/</span>
+            <span aria-current="page">Briefings</span>
+          </nav>
+          <div className="hero-kicker">CAIO briefings</div>
+          <h1>Clear positions on the decisions AI is forcing law firms to make.</h1>
+          <p>
+            Short, sourced briefings for managing partners, practice leaders, and the people accountable for how a firm adopts AI. No vendor pitch, no hype—the operating judgment behind each choice, grounded in ABA guidance and NIST frameworks.
+          </p>
+          <div className="briefings-topics" aria-label="Topics covered">
+            {topics.map((topic) => <span key={topic}>{topic}</span>)}
+          </div>
+        </header>
+        <section className="briefings-list" aria-label="All briefings">
+          <div className="essay-list">
+            {essays.map((essay, index) => (
+              <a className="essay-card" href={`/notes/${essay.slug}`} key={essay.slug}>
+                <div className="essay-meta">
+                  <span>{essay.type}</span>
+                  <span>{essay.readTime}</span>
+                  <time dateTime={essay.published}>{formatDate(essay.published, 'short')}</time>
+                </div>
+                <h3>{essay.title}</h3>
+                <p>{essay.deck}</p>
+                <div className="essay-foot">
+                  <span className="essay-id">Filed {String(index + 1).padStart(2, '0')}</span>
+                  <span className="read-link">Read note <Arrow /></span>
+                </div>
+              </a>
+            ))}
+          </div>
+          <div className="briefings-coda">
+            <p>Facing a decision these briefings don’t answer?</p>
+            <a href={calendlyUrl} target="_blank" rel="noreferrer">Book a 30-minute conversation <Arrow /></a>
           </div>
         </section>
       </main>
@@ -544,11 +629,12 @@ function Footer() {
     <footer>
       <div className="footer-top">
         <p>Have a consequential AI decision in front of your firm?</p>
-        <a href="mailto:hello@caio.legal?subject=A%20consequential%20AI%20decision">Let’s think it through. <Arrow /></a>
+        <a href={calendlyUrl} target="_blank" rel="noreferrer">Let’s think it through. <Arrow /></a>
       </div>
       <div className="footer-bottom">
         <a className="brand footer-brand" href="/">caio<span>.legal</span></a>
         <p>AI leadership for law firms. This site provides education and commentary, not legal advice.</p>
+        <p>Prefer email? <a className="footer-email" href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
         <p>© {new Date().getFullYear()} caio.legal</p>
       </div>
     </footer>
@@ -626,7 +712,7 @@ function ArticlePage({ essay }: { essay: Essay }) {
       <Header page="article" />
       <main id="article" className="article-page">
         <header className="article-hero">
-          <a className="article-back" href="/#field-notes">← All briefings</a>
+          <a className="article-back" href="/briefings">← All briefings</a>
           <div className="article-meta">
             <span>{essay.type}</span>
             <span>{essay.readTime}</span>
@@ -662,9 +748,25 @@ function ArticlePage({ essay }: { essay: Essay }) {
                 ))}
               </ol>
             </section>
+            <section className="article-related" aria-labelledby="related-title">
+              <h2 id="related-title">More briefings</h2>
+              <div className="related-list">
+                {essays
+                  .filter((item) => item.slug !== essay.slug)
+                  .sort((a, b) => Number(b.type === essay.type) - Number(a.type === essay.type))
+                  .slice(0, 2)
+                  .map((item) => (
+                    <a key={item.slug} href={`/notes/${item.slug}`}>
+                      <span>{item.type}</span>
+                      <strong>{item.title}</strong>
+                    </a>
+                  ))}
+              </div>
+              <a className="related-all" href="/briefings">View all briefings <Arrow /></a>
+            </section>
             <div className="article-coda">
               <p>What decision is your firm trying to make?</p>
-              <a href="mailto:hello@caio.legal?subject=A%20question%20from%20your%20field%20notes">Continue the conversation <Arrow /></a>
+              <a href={calendlyUrl} target="_blank" rel="noreferrer">Continue the conversation <Arrow /></a>
             </div>
           </div>
         </article>
@@ -697,6 +799,7 @@ function NotFoundPage() {
 export function App({ pathname }: { pathname: string }) {
   const normalizedPath = pathname.replace(/\/+$/, '') || '/'
   if (normalizedPath === '/about') return <AboutPage />
+  if (normalizedPath === '/briefings') return <BriefingsPage />
   const slug = normalizedPath.match(/^\/notes\/([^/]+)$/)?.[1]
   const essay = essays.find((item) => item.slug === slug)
   if (essay) return <ArticlePage essay={essay} />
