@@ -1,314 +1,319 @@
 # caio.legal SEO Audit
 
-Audit date: 2026-07-17  
-Audit type: Full pre-launch technical, content, on-page, performance, schema, image, AI-search, and search-experience review  
+Audit date: 2026-07-17
+
 Canonical target: `https://caio.legal/`
+
+Audit type: live crawl plus repository, rendered-page, technical, content, on-page, schema, performance, image, AI-search, backlink, and SXO review
 
 ## Executive summary
 
-**SEO readiness score: 51/100 — needs work before launch**
+**SEO health score: 72/100 — technically launch-ready, but not yet search-competitive**
 
-This is a pre-launch readiness score, not a confirmed live-site health score. The public domain could not be crawled because the apex currently has no A, AAAA, CNAME, or HTTPS record, while `www.caio.legal` returns NXDOMAIN. A search check also found no indexed result for the domain or exact brand phrase. Until DNS is restored, search engines and prospective visitors cannot reach the site.
+The site is live, fast, crawlable, server-rendered, and internally consistent. All six sitemap URLs return `200`, contain their visible content in the initial HTML, expose one H1, use self-referencing canonicals, and pass the repository's production build verification. Unknown URLs now return a real `404`. These are major improvements over the earlier pre-launch state.
 
-The underlying site has a strong foundation: focused positioning, original writing, clear expertise signals, valid route-specific titles and descriptions, a clean six-URL sitemap, good rendered heading structure, excellent homepage accessibility, and stable layouts. The largest implementation gap is that the build's “prerender” step only writes route-specific metadata into an otherwise empty React shell. Each generated HTML page contains zero visible words, headings, links, or images until JavaScript executes. That weakens crawl resilience and makes the site much harder for non-JavaScript AI crawlers and extraction systems to understand.
+The limiting factors are now authority and search intent rather than basic crawlability. The site has no structured data, its four briefings lack named authorship and dates, three are under 300 words, commercial services are described only inside the homepage, and no branded result was found for `site:caio.legal` or the exact domain phrase. The domain was also absent from the latest available Common Crawl web graph. That is normal for a newly launched domain, but it means the next work should focus on discoverability, entity clarity, and pages that directly satisfy commercial search intent.
 
-Business type detected: **B2B professional services and expert publication**, focused on fractional AI leadership, governance, risk assessment, and adoption for law firms. The site does not currently present itself as a location-dependent local service, so a LocalBusiness/GBP program is not assumed.
+Business type detected: **B2B professional services and expert publication** for independent AI leadership, governance, adoption, and risk work in law firms. The site does not currently operate as a location-dependent local business, so local-pack/GBP factors are not included in the score.
 
 ### Score breakdown
 
 | Category | Weight | Score | Weighted contribution |
 |---|---:|---:|---:|
-| Technical SEO | 22% | 20 | 4.4 |
-| Content quality | 23% | 82 | 18.9 |
-| On-page SEO | 20% | 62 | 12.4 |
-| Schema / structured data | 10% | 0 | 0.0 |
-| Performance / CWV | 10% | 85 | 8.5 |
-| AI-search readiness | 10% | 38 | 3.8 |
-| Images | 5% | 60 | 3.0 |
-| **Overall** | **100%** |  | **51.0** |
+| Technical SEO | 22% | 91 | 20.0 |
+| Content quality | 23% | 68 | 15.6 |
+| On-page SEO | 20% | 81 | 16.2 |
+| Schema / structured data | 10% | 20 | 2.0 |
+| Performance / CWV proxy | 10% | 88 | 8.8 |
+| AI-search readiness | 10% | 49 | 4.9 |
+| Images | 5% | 83 | 4.2 |
+| **Overall** | **100%** |  | **71.7 → 72** |
 
-### Top critical and high-priority issues
+### Highest-priority issues
 
-1. **Critical — the public domain is unreachable.** The apex has no public address/alias record and `www` does not exist in DNS.
-2. **Critical — every generated HTML body is an empty JavaScript shell.** All six route files contain 0 HTML words, 0 headings, and 0 links before client rendering.
-3. **High — invalid URLs return `200 OK` with the homepage shell.** This creates soft 404s and wastes crawl/index signals.
-4. **High — no structured data exists.** The site is missing Organization/Person, Service, WebSite, BreadcrumbList, and Article JSON-LD.
-5. **High — no dedicated, indexable service pages exist.** Search results for the relevant commercial intent favor focused pages such as “AI governance consulting for law firms,” while caio.legal keeps its services inside homepage sections.
+1. **High — no structured data exists on any page.** Search engines have to infer the site, author, articles, and services from prose alone.
+2. **High — commercial intent has no dedicated landing pages.** The homepage cannot fully target fractional CAIO, AI governance consulting, exposure assessment, and training queries at the same time.
+3. **High — article provenance is weak for a legal-adjacent YMYL topic.** Briefings show “Filed by caio.legal,” not a named author, and contain no publication or modification dates.
+4. **High — the content footprint is small and shallow.** Three of four briefings contain 272–296 words, none cite primary sources, and none link to related briefings.
+5. **High — the new domain is not yet visible in search or backlink datasets.** Exact-domain searches returned no result and Common Crawl did not contain the domain.
 
-### Top quick wins
+### Quick wins
 
-1. Restore apex and `www` DNS, choose one canonical host, and force the other host to redirect.
-2. Add `og:image`, `og:url`, `og:site_name`, and Twitter card metadata to all page templates.
-3. Shorten the 90-character field-note title tag and sharpen the homepage title around “fractional CAIO for law firms.”
-4. Add Ken Erwin as the visible article author, link to `/about`, and add published/modified dates.
-5. Self-host/preload key fonts, convert the portrait to AVIF/WebP, and remove the remote image dependency.
+1. Add a connected JSON-LD graph for `WebSite`, `Organization`, and `Person`; add `ProfilePage`, `BlogPosting`, and `BreadcrumbList` on the appropriate routes.
+2. Replace “Filed by caio.legal” with “By Ken Erwin,” link the name to `/about`, and add accurate published/modified dates.
+3. Add `og:url`, `og:site_name`, a 1200×630 `og:image`, and Twitter summary-card metadata.
+4. Verify the property in Google Search Console and Bing Webmaster Tools, submit the sitemap, and inspect every canonical URL.
+5. Add a crawlable briefings index and related-reading links between all four articles.
 
 ## Scope and evidence
 
 The audit reviewed:
 
-- the full local project and production build;
-- all six URLs declared in `public/sitemap.xml`;
-- `robots.txt`, the sitemap, canonical tags, generated metadata, deployment configuration, and route behavior;
-- Lighthouse lab runs on the homepage (mobile and desktop) and the longest article (mobile);
-- current public DNS resolution and direct HTTP reachability;
-- search-result checks for `site:caio.legal`, the exact brand phrase, and core service-intent phrases;
-- external links and the remote portrait asset.
+- the live homepage and every URL in `https://caio.legal/sitemap.xml`;
+- initial server-delivered HTML and rendered desktop, laptop, tablet, and mobile views;
+- status codes, redirect behavior, headers, robots directives, sitemap coverage, canonicals, and 404 handling;
+- titles, descriptions, headings, internal/external links, article depth, authorship, dates, schema, images, and social metadata;
+- lab performance heuristics and visual checks at multiple viewports;
+- current search results for the domain and core positioning terms;
+- Common Crawl domain-level backlink data;
+- the repository's production build and verification commands.
 
 Limitations:
 
-- The public site could not be crawled because DNS is not configured.
-- Search Console, GA4, URL Inspection, and Moz/Bing backlink credentials are not configured.
-- CrUX/PageSpeed field data is unavailable for an unreachable, apparently unindexed origin.
-- The interactive visual browser connection failed in the audit environment. Rendered layout evidence therefore comes from Lighthouse, source inspection, and accessibility output rather than saved screenshots.
-- Search-result absence is directional, not a substitute for Google Search Console index coverage.
+- Google Search Console, GA4, Bing Webmaster, and Moz are not authenticated.
+- PageSpeed Insights and CrUX API requests returned `403`; no field CWV data is available.
+- Backlink coverage is limited to Common Crawl, which did not contain this new domain. Anchor text, link quality, and new/lost links cannot be scored.
+- Search-result sampling is directional and location-neutral; it does not replace Search Console query data or controlled rank tracking.
+- The audit's bundled sitemap analyzer falsely treated preload and stylesheet links as canonicals. Manual inspection confirmed that all six actual `<link rel="canonical">` values are correct.
+- The bundled Lighthouse wrapper produced an impossible 102/100 score. Performance was rescored using the underlying lab metrics and capped conservatively.
 
-## Crawl and indexability
+## Technical SEO
 
-### Public availability
+### Technical score: 91/100
 
-| Check | Result |
-|---|---|
-| `caio.legal` A / AAAA / CNAME / HTTPS | No records returned |
-| `www.caio.legal` | NXDOMAIN |
-| Direct HTTPS fetch | DNS resolution failure |
-| Exact-domain search check | No results found |
-| Exact-brand phrase search check | No results found |
+| Area | Status | Finding |
+|---|---|---|
+| HTTPS | Pass | Apex HTTPS returns `200`; HTTP redirects once to HTTPS. |
+| Crawlability | Pass | `robots.txt` allows crawling and references the sitemap. |
+| Sitemap | Pass | Valid XML; six canonical URLs; all return `200`; no redirected or noindexed entries. |
+| Initial HTML | Pass | Critical copy, headings, links, and images are present before JavaScript runs. |
+| Canonicals | Pass | All six sitemap URLs use correct self-referencing canonicals. |
+| 404 handling | Pass | Unknown routes return HTTP `404` and the generated 404 is `noindex, follow`. |
+| URL consistency | Pass | Trailing-slash variants redirect once to the canonical non-slash URL. |
+| Mobile | Pass | Viewport is configured; no horizontal scroll or overlap was detected. |
+| Security headers | Warn | CSP and HSTS are absent; existing X-Frame-Options, X-Content-Type-Options, Referrer-Policy, and Permissions-Policy are good. |
+| `www` host | Warn | `www.caio.legal` does not resolve, so it cannot redirect to the canonical apex. |
+| IndexNow | Info | Not implemented; optional for faster Bing-family discovery. |
 
-The Cloudflare tunnel configuration declares both hostnames, but the public DNS records that route those hostnames to the tunnel are absent. This is the immediate launch blocker.
+### Robots and AI crawler access
 
-### Robots and sitemap
+`robots.txt` contains a permissive wildcard rule. Googlebot and the major AI search crawlers are allowed, including OAI-SearchBot, ChatGPT-User, ClaudeBot, and PerplexityBot. No accidental block was found.
 
-`robots.txt` is concise and correct for a public site:
+### Sitemap
 
-```text
-User-agent: *
-Allow: /
+The sitemap is clean and contains only the homepage, About page, and four briefings. It does not use ignored `<priority>` or `<changefreq>` tags. Add accurate `<lastmod>` values only after publication/modification dates become part of the content model.
 
-Sitemap: https://caio.legal/sitemap.xml
-```
+### Technical recommendations
 
-The XML sitemap is well formed and lists exactly six intended routes: the homepage, about page, and four field notes. No listed route is missing from the production build. Once article dates exist, add accurate `<lastmod>` values; do not fabricate change dates on every deployment.
-
-### Soft 404s
-
-The router falls back to `<Home />` for every unmatched pathname, and the server falls back to `/index.html`. Tested invalid routes such as `/definitely-not-a-page` and `/notes/not-a-real-note` return `200 OK` and the homepage canonical.
-
-This should be replaced with:
-
-- a real 404 page;
-- an HTTP 404 response for unknown routes;
-- direct 301 redirects only for genuine moved/normalized URLs;
-- a single trailing-slash convention.
-
-### JavaScript rendering dependency
-
-The production build contains route-specific `<title>`, description, Open Graph type, and canonical values, but each document's `<body>` is only:
-
-```html
-<div id="root"></div>
-<script type="module" src="/assets/..."></script>
-```
-
-All six generated HTML pages therefore have:
-
-- 0 server-delivered words;
-- 0 server-delivered H1/H2 headings;
-- 0 server-delivered links;
-- 0 server-delivered images;
-- 0 JSON-LD blocks.
-
-Google can render JavaScript, which explains the rendered Lighthouse SEO score of 100, but that score does not validate server-delivered content, indexing, topical depth, or AI-crawler extraction. Replace the metadata-only script with true static generation or server rendering that writes the rendered page body into each route's HTML.
-
-## On-page SEO
-
-### Titles and descriptions
-
-| Route | Title length | Description length | Assessment |
-|---|---:|---:|---|
-| `/` | 40 | 65 | Clear but undersells the commercial query; consider “Fractional CAIO for Law Firms | caio.legal.” |
-| `/about` | 28 | 142 | Good description; title could add “AI Leadership for Law Firms.” |
-| `/notes/your-best-ai-work-is-probably-hidden` | 90 | 115 | Title is very likely to truncate; preserve the hook in the H1 and shorten the title tag. |
-| `/notes/ai-policy-is-not-an-adoption-strategy` | 55 | 91 | Strong, clear title; description could add “law firms” for context. |
-| `/notes/billable-hour-is-not-the-first-change` | 64 | 90 | Slightly long but usable; description is clear. |
-| `/notes/what-a-fractional-ai-leader-owns` | 65 | 90 | Strong intent match; slightly long. |
-
-Each route has a unique self-referencing canonical in the build. Rendered pages use one clear H1 and sensible H2/H3 hierarchy. Internal anchor text is descriptive.
-
-### Missing social metadata
-
-Every route is missing:
-
-- `og:image` and image dimensions/alt;
-- `og:url`;
-- `og:site_name`;
-- `twitter:card`, `twitter:title`, `twitter:description`, and `twitter:image`.
-
-Create one branded default 1200×630 image plus article-specific images where practical. This is primarily a sharing/CTR improvement, not a direct ranking factor.
-
-### Internal linking
-
-The homepage links to all four notes and `/about`, and the notes link back to briefings. The architecture is clean but shallow. Improvements:
-
-- add contextual links between related notes;
-- link each article byline to `/about`;
-- add dedicated service pages and link them from relevant article passages;
-- add breadcrumbs on articles and service pages;
-- add a “related briefings” module to distribute authority and deepen sessions.
+- Add HSTS after confirming HTTPS is permanent for every intended host.
+- Add a restrictive, tested Content-Security-Policy that supports the current font, image, and Cloudflare behavior.
+- Either configure `www.caio.legal` to redirect once to the apex or explicitly document that it will remain unconfigured.
+- Add IndexNow only if Bing discovery speed is operationally useful; it is not a launch blocker.
 
 ## Content quality and E-E-A-T
 
-### Strengths
+### Content score: 68/100
 
-- Positioning is unusually clear: one accountable AI leader connecting governance, adoption, vendor decisions, professional duty, and daily work.
-- The content is original and written from a consistent point of view rather than assembled as generic AI copy.
-- The about page contains detailed first-hand experience, credentials, named projects, a visible role boundary, links to public work, and a direct explanation of relevance to law firms.
-- The homepage has strong problem/solution alignment for managing partners and firm leaders.
-- Each note addresses a discrete leadership question with a logical argument and useful operational framing.
+The homepage and About page are distinctive, specific, and substantially stronger than generic AI-consulting copy. They show real operating experience, named companies, product-building history, educational work, and a clear boundary that Ken is not a lawyer. Those are meaningful Experience, Expertise, and Trust signals.
 
-### Gaps
+The briefing layer is much weaker. The articles are concise thought pieces rather than durable search resources:
 
-- Articles are attributed to “caio.legal,” not a named person. Use “Ken Erwin,” link the byline, and provide an author/reviewer block.
-- Articles have no published or updated dates. Add visible dates and matching structured data.
-- Assertions about legal-industry adoption, professional obligations, and market behavior are not supported by citations. Add selective primary sources such as bar guidance, ethics opinions, and first-party industry research where factual claims are made.
-- Four notes are a strong start but not yet a topical authority footprint.
-- There are no case studies, anonymized engagement patterns, process examples, FAQ pages, or evidence-led outcome pages.
-- The service offer is described well, but scope, deliverables, who it is for, process, and expected decision outcomes are scattered across the homepage rather than consolidated on intent-matched pages.
+| Page | Approx. words | Main gap |
+|---|---:|---|
+| `/notes/your-best-ai-work-is-probably-hidden` | 508 | Strongest briefing, but no named byline, date, sources, or related links. |
+| `/notes/ai-policy-is-not-an-adoption-strategy` | 288 | Too little depth for a competitive governance/adoption query. |
+| `/notes/billable-hour-is-not-the-first-change` | 296 | Original thesis, but no evidence, examples, or supporting sources. |
+| `/notes/what-a-fractional-ai-leader-owns` | 272 | Commercially relevant, but too brief to satisfy comparison/evaluation intent. |
 
-### Content architecture opportunity
+### E-E-A-T assessment
 
-Current search results for relevant intent favor pages explicitly titled around “AI governance consulting for law firms” and practical adoption frameworks. The site should build a small hub around three commercial pages:
+| Factor | Score | Evidence |
+|---|---:|---|
+| Experience | 17/25 | Production AI and resilience examples, legal product-building, and first-person operating perspective. |
+| Expertise | 19/25 | Relevant technical background and credentials; article authorship is not explicitly connected to Ken. |
+| Authoritativeness | 13/25 | External properties and LinkedIn exist, but the new domain has no detectable search/backlink footprint or citations. |
+| Trustworthiness | 17/25 | HTTPS, contact route, About page, role boundary, and named experience; no privacy page, article dates, or editorial policy. |
+| **Total** | **66/100** | Strong personal foundation, weak publication provenance and external validation. |
 
-1. `/fractional-caio-law-firms`
-2. `/ai-governance-law-firms`
-3. `/law-firm-ai-exposure-assessment`
+### Content recommendations
 
-Supporting editorial clusters:
+- Make Ken the visible author of every briefing and link to the About page.
+- Add truthful `datePublished` and `dateModified` values to the data model and visible article header.
+- Expand the strongest briefings with concrete examples, decision frameworks, and selective citations to primary sources such as bar opinions, NIST guidance, or vendor documentation.
+- Add a short editorial note explaining the site's educational purpose and update practice.
+- Add a privacy notice if analytics, forms, tracking, or lead-capture tooling is introduced.
 
-- governance and policy: acceptable-use policy, vendor review, client confidentiality, supervision, incident response;
-- adoption and change: pilots, training, practice-group rollout, measurement, internal champions;
-- firm economics: billable-hour impacts, pricing, knowledge capture, talent development;
-- executive leadership: CAIO role, decision rights, operating model, board/partner briefings.
+## On-page SEO
 
-Avoid creating thin pages for every minor keyword. Each service page should stand on its own with clear scope, decision outcomes, proof, FAQ content, and internal links to the strongest briefings.
-
-## Structured data
-
-No JSON-LD is present on any route.
-
-Recommended implementation:
-
-- homepage: `WebSite` plus `Organization` or `ProfessionalService` only where the facts are accurate;
-- about page: `Person` connected to the organization/site using stable `@id` values and `sameAs` links;
-- service pages: `Service` with provider, audience, area served only if factually defined, and clear page URLs;
-- articles: `Article` or `BlogPosting` with headline, description, author, datePublished, dateModified, mainEntityOfPage, image, and publisher;
-- articles/service pages: `BreadcrumbList`;
-- FAQ schema only when the same FAQs are visibly rendered and eligible under Google's current rich-result rules.
-
-Do not add `LegalService` merely because the audience is law firms: the about page explicitly states that Ken is not a lawyer and does not provide legal advice. `ProfessionalService` or `Organization` is the safer factual model unless the business structure supports something more specific.
-
-## Performance and Core Web Vitals
-
-### Lighthouse lab results
-
-| Page / mode | Performance | Accessibility | Best practices | SEO | FCP | LCP | TBT | CLS |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| Homepage / mobile | 82 | 100 | 100 | 100 | 3.4s | 3.7s | 0ms | 0 |
-| Long article / mobile | 85 | 94 | 100 | 100 | 3.3s | 3.3s | 0ms | 0 |
-| Homepage / desktop | 97 | 100 | 100 | 100 | 1.0s | 1.0s | 0ms | 0.008 |
-
-These are lab measurements against the local production build, not CrUX field data.
-
-### Main performance findings
-
-- The mobile LCP is text, not an image. The delay is driven mainly by render-blocking CSS/font work and the intentional hero reveal timing.
-- The CSS `@import` creates a critical request chain through Google Fonts. Lighthouse estimated roughly 2.3 seconds of mobile render-blocking opportunity.
-- Google Fonts transferred about 174 KB across three font files on the homepage.
-- The home route downloads the 102 KB remote portrait even though it is below the fold.
-- The production JS bundle is 231 KB raw / about 72 KB transferred; Lighthouse estimated 34–41 KB of unused JavaScript depending on route.
-- Layout stability and main-thread blocking are excellent: 0ms TBT and essentially zero CLS.
-
-Recommended order:
-
-1. Produce real static HTML so the initial content does not depend on React startup.
-2. Self-host/subset fonts or reduce the number of families/weights; preload only the critical font.
-3. Replace CSS `@import` with explicit preload/stylesheet tags if Google-hosted fonts remain.
-4. Do not delay LCP text with entrance animation; respect reduced motion and make the initial H1 visible immediately.
-5. Lazy-load the below-fold homepage portrait and use `fetchpriority="high"` only where the portrait is truly above the fold.
-6. Code-split route content or use a static-site generator so articles do not download homepage-only code.
-
-## Images
+### On-page score: 81/100
 
 Strengths:
 
-- The portrait has meaningful `alt="Ken Erwin"` text.
-- Explicit width and height attributes reduce layout shift.
-- The favicon is lightweight SVG.
+- All six indexable pages have unique titles, meta descriptions, H1s, and canonical URLs.
+- Heading hierarchy is valid and descriptive.
+- The homepage has 1,000+ words and links to every current page.
+- The About page contains substantial proof and explicit expertise signals.
+- Routes are short, descriptive, and stable.
 
-Issues:
+Gaps:
 
-- The portrait is served from `devopslibrary.com`, creating an avoidable availability, privacy, cache-control, and performance dependency.
-- The JPEG is roughly 102 KB and Lighthouse estimates about 54 KB savings from a next-generation format.
-- The same image is used in different aspect-ratio treatments without route-specific source sizing.
-- No social-sharing images exist.
+- The 90-character title for “Your firm’s best AI workflow…” is likely to truncate heavily.
+- Two other article titles are 64–65 characters and may truncate on narrower results.
+- The homepage meta description is only 65 characters and undersells the service proposition.
+- Article descriptions are concise but do not consistently name the law-firm audience.
+- No `og:image`, `og:url`, `og:site_name`, or Twitter card tags are present.
+- There is no crawlable `/briefings` hub, breadcrumb trail, or related-reading module.
+- Each article links back to the homepage but not to another article or a dedicated service page.
 
-Host an optimized AVIF/WebP version on caio.legal, provide `srcset`/`sizes`, keep the explicit dimensions, lazy-load below-fold usage, and create purpose-built social images.
+## Schema and structured data
 
-## AI-search readiness / GEO
+### Schema score: 20/100
 
-The prose itself is strong for AI retrieval: it uses clear headings, defines CAIO, names risks, and presents compact operational frameworks. However, machine extraction is held back by implementation and provenance gaps.
+No JSON-LD, Microdata, or RDFa was detected on any page. This does not block indexing, but it is a major missed opportunity for entity disambiguation and AI-search extraction.
 
-Priority improvements:
+Recommended graph:
 
-- deliver article and service content in the initial HTML;
-- add named authorship, dates, credentials, and links to first-party evidence;
-- add Organization/Person/Article/Service structured data with stable entity IDs;
-- add concise definition and answer blocks near the top of key pages;
-- add an optional `llms.txt` that points to the canonical homepage, about page, services, and briefing index;
-- publish a human-readable briefing index page instead of relying only on a homepage anchor;
-- avoid unsupported superlatives and keep experience claims connected to the disclosure already present on `/about`.
+- Homepage: `WebSite`, `Organization` or `ProfessionalService`, and `Person`, joined with stable `@id` values.
+- About page: `ProfilePage` whose `mainEntity` is the same `Person`.
+- Briefings: `BlogPosting` or `Article`, with `author`, `datePublished`, `dateModified`, `headline`, `description`, `mainEntityOfPage`, and publisher references.
+- Briefings and future service pages: `BreadcrumbList`.
+- Dedicated commercial pages: `Service` with a truthful provider, audience, area served if applicable, and description.
 
-`llms.txt` is supplemental. It does not replace crawlable HTML, normal internal linking, sitemaps, or structured data.
+Do not use `LegalService` unless caio.legal is actually providing legal services. The current copy correctly says it does not provide legal advice. Do not add FAQPage merely for Google rich results; commercial FAQ rich results are restricted.
+
+## Performance and Core Web Vitals
+
+### Performance score: 88/100
+
+The deterministic lab run reported:
+
+| Metric | Result | Interpretation |
+|---|---:|---|
+| LCP | 1.64s | Good lab signal |
+| CLS | 0.030 | Good |
+| Interaction metric | 124ms | Good scripted signal; not CrUX field INP |
+| TBT | 86.8ms | Good lab proxy |
+| Initial HTML | ~15KB | Lean |
+| Client JS | ~72KB gzip | Reasonable for the current site |
+| CSS | ~6KB gzip | Lean |
+
+These are lab/heuristic results, not 75th-percentile field data. PSI and CrUX APIs returned `403`, and the domain is too new for confirmed field CWV evidence.
+
+Remaining risks:
+
+- CSS begins with a Google Fonts `@import`, adding a stylesheet request chain before font downloads.
+- The only content image is hosted on `devopslibrary.com`; it is a 102KB JPEG and creates a cross-origin dependency.
+- Several homepage sections begin hidden and depend on JavaScript/IntersectionObserver to reveal. Initial HTML remains crawlable, but no-JS users could see hidden sections because CSS sets `.reveal { opacity: 0; }`.
+
+Recommendations:
+
+- Self-host and subset the critical fonts; preload only the weights actually used above the fold.
+- Host Ken's portrait on caio.legal and serve AVIF/WebP with an appropriate fallback.
+- Make reveal animations progressive enhancement: content should remain visible when JavaScript is unavailable.
+- Recheck field CWV after the domain has enough Chrome traffic and API access is fixed.
+
+## Images and visual review
+
+### Image score: 83/100
+
+The site uses one semantic `<img>` across the current content. It has useful alt text, explicit width/height, no oversized payload, and no missing dimension. The source is a 102KB JPEG.
+
+Visual checks passed at desktop, laptop, tablet, and mobile widths:
+
+- H1 and primary CTA are visible above the fold.
+- No horizontal scroll or element overlap was detected.
+- Base text is 17–18px and readable.
+- The layout remains coherent at phone width.
+
+The automated visual check flagged three undersized link targets on mobile: the brand link, the inline “Discuss your exposure” link, and the “See what is at stake” jump link. These are not catastrophic, but increasing vertical padding would improve touch ergonomics.
+
+Saved evidence:
+
+- `screenshots/caio_legal_desktop.png`
+- `screenshots/caio_legal_laptop.png`
+- `screenshots/caio_legal_tablet.png`
+- `screenshots/caio_legal_mobile.png`
+
+## AI-search / GEO readiness
+
+### GEO score: 49/100
+
+Strengths:
+
+- Major AI search crawlers are allowed.
+- Full content is server-rendered in initial HTML.
+- The About page provides clear person/entity signals in prose.
+- The homepage has clean headings, short paragraphs, and original positioning.
+
+Gaps:
+
+- No schema graph connects the brand, author, site, articles, and services.
+- No `llms.txt` exists. This is an optional emerging convention, not a critical SEO requirement.
+- No article has a named author, publication date, or cited source.
+- The site contains few self-contained answer blocks and no comparison tables or reusable decision frameworks.
+- Exact-domain searches returned no indexed result, so AI systems have little external evidence to corroborate the entity.
+
+Highest-impact GEO work:
+
+1. Implement the connected entity and article schema graph.
+2. Publish a few evidence-led, source-cited resources that answer concrete law-firm AI questions.
+3. Add visible bylines and dates.
+4. Create dedicated service pages with answer-first definitions and clear deliverables.
+5. Add `llms.txt` only after the canonical page set and authority content exist.
 
 ## Search experience (SXO)
 
-The homepage is persuasive for a referred visitor but does not fully match a cold commercial searcher's next questions. Searchers looking for a fractional CAIO or AI governance consultant typically need to know:
+### SXO gap score: 67/100
 
-- whether the service is specifically for their firm size and maturity;
-- what the first engagement includes;
-- what artifacts or decisions they will leave with;
-- how governance and adoption work together;
-- what is explicitly outside scope;
-- why this advisor is credible and how to begin.
+This score is separate from the 72/100 SEO health score.
 
-The site answers most of these somewhere, but not in a dedicated, scannable service page. Build those pages before expanding the blog aggressively.
+#### Query: “AI leadership for law firms”
 
-## Security and deployment notes
+Current results are dominated by authoritative editorial and educational pages: industry reports, bar publications, major law-firm announcements, executive education, and association guidance. The dominant page type is **informational authority content**, while the caio.legal homepage is a **hybrid landing/service page**. Verdict: **high mismatch** for this query. A substantial guide or research-backed briefing is a better target than the homepage.
 
-The Nginx configuration includes `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, and a restrictive `Permissions-Policy`. Static assets receive immutable caching. Positive items that remain unverified live include TLS, compression, the actual redirect chain, cache headers, and response codes.
+#### Query: “fractional AI leader law firm”
 
-Consider adding HSTS after HTTPS and host redirects are confirmed. A Content Security Policy would improve defense in depth but should be deployed carefully because the current Google Fonts and remote portrait dependencies need to be accounted for.
+Results include dedicated fractional CTO/AI-leadership service pages and firms explicitly offering embedded governance/transformation leadership. The dominant page type is **service page**. caio.legal mentions fractional CAIO work on the homepage but has no dedicated route. Verdict: **high mismatch**.
 
-## Measurement and authority limitations
+### Persona scores
 
-- No Search Console or GA4 credentials were available, so clicks, impressions, CTR, query mix, organic landing pages, and confirmed index status were not audited.
-- No Moz or Bing Webmaster API credentials were available. Backlink quality and referring-domain counts are unknown.
-- No prior drift baseline exists.
-- There is no CrUX field record available to validate real-user Core Web Vitals.
+| Persona derived from result themes | Relevance | Clarity | Trust | Action | Total |
+|---|---:|---:|---:|---:|---:|
+| Managing partner seeking accountable AI ownership | 22 | 18 | 16 | 20 | 76 |
+| Risk/IT evaluator comparing governance approaches | 20 | 17 | 15 | 19 | 71 |
+| Knowledge or innovation leader driving adoption | 19 | 15 | 13 | 17 | 64 |
+| Buyer comparing fractional AI leaders | 17 | 13 | 12 | 14 | 56 |
 
-Set up Search Console and submit the sitemap immediately after DNS and HTTPS are live. Record the first technical/drift baseline only after the canonical site is reachable.
+The weakest persona needs a page that states scope, process, deliverables, engagement boundaries, proof, and a low-friction next step. The current homepage provides good positioning but makes comparison difficult.
 
-## Recommended launch gate
+## Backlinks and off-site authority
 
-Do not treat the site as SEO-ready until all of the following are true:
+### Backlink health: insufficient data (0/7 scoreable factors)
 
-- apex DNS resolves and HTTPS returns 200;
-- `www` redirects permanently to the chosen canonical host;
-- all six intended pages return rendered HTML with visible content before JavaScript;
-- unknown URLs return a real 404;
-- canonicals, robots, and sitemap are reachable on the live origin;
-- Organization/Person and Article structured data validate;
-- social images and article authorship/dates are present;
-- mobile LCP is retested after font/render changes;
-- Search Console property and sitemap submission are complete.
+Available source: Common Crawl Web Graph, confidence 0.50. The domain was not present in release `cc-main-2026-jan-feb-mar`. No Moz, Bing Webmaster, or premium backlink source was configured.
 
+This is a lack-of-data finding, not evidence of a toxic or weak profile. Do not create a disavow file. The appropriate next steps are:
+
+- verify Google Search Console and Bing Webmaster Tools;
+- earn a small number of relevant, editorial links and mentions from legal-tech, law-firm management, AI governance, and professional networks;
+- connect caio.legal from Ken's established properties and profiles where contextually appropriate;
+- publish link-worthy resources such as a governance decision framework, vendor review checklist, or anonymized operating benchmark.
+
+## Local SEO applicability
+
+Local SEO is **not scored**. The site names Indianapolis on the About page but does not present a public office, service radius, business hours, phone number, or local-intent offering. It is better modeled as a national/remote B2B advisory and publication. Do not add LocalBusiness/LegalService markup or pursue location pages unless the actual operating model becomes location-dependent.
+
+## Priority summary
+
+### High — next 1–2 weeks
+
+1. Implement schema and entity linking.
+2. Add article bylines, dates, author links, and source citations.
+3. Create dedicated fractional CAIO, governance, and exposure-assessment service pages.
+4. Verify Search Console/Bing and submit the sitemap.
+5. Add complete social metadata and a branded social image.
+
+### Medium — next month
+
+1. Expand the three shortest briefings or replace them with deeper intent-matched resources.
+2. Add a briefings index, breadcrumbs, related content, and contextual links to service pages.
+3. Self-host fonts and the portrait; make reveal animations no-JS safe.
+4. Configure `www`, HSTS, and a tested CSP.
+5. Improve mobile touch target padding.
+
+### Low / backlog
+
+1. Add accurate sitemap `<lastmod>` values.
+2. Add IndexNow for Bing-family discovery if useful.
+3. Add an `llms.txt` file after the canonical information architecture stabilizes.
+4. Configure Moz or Bing backlink data for a scoreable off-site audit.

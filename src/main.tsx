@@ -3,6 +3,8 @@ import type { Root } from 'react-dom/client'
 import { App } from './app'
 import './styles.css'
 
+document.documentElement.classList.replace('no-js', 'js')
+
 declare global {
   var __caioRoot: Root | undefined
 }

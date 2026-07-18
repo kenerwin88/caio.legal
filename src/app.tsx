@@ -1,201 +1,34 @@
 import { useEffect, useState } from 'react'
+import { essays, formatDate, routeMetadata, type Essay } from './site-data'
 
-type Essay = {
-  slug: string
-  type: string
-  title: string
-  deck: string
-  readTime: string
-  body: { heading?: string; paragraphs: string[] }[]
+function setMetaContent(selector: string, content: string) {
+  document.querySelector(selector)?.setAttribute('content', content)
 }
-
-const essays: Essay[] = [
-  {
-    slug: 'your-best-ai-work-is-probably-hidden',
-    type: 'Leadership',
-    title: 'Your firm’s best AI workflow may already exist—and no one else knows about it',
-    deck: 'The gap is rarely curiosity. It is the leadership needed to discover, test, and scale what one lawyer or paralegal has learned.',
-    readTime: '6 min read',
-    body: [
-      {
-        paragraphs: [
-          'Nearly every law firm already has an AI adoption curve hiding inside it. Some people have not begun. Others are testing ChatGPT or Claude, sometimes through personal accounts the firm cannot see. And one lawyer, paralegal, or technically curious staff member is often far ahead—quietly using AI to improve a recurring part of the work.',
-          'That unevenness is not evidence that the firm lacks interest. It is evidence that experimentation has outrun leadership. Useful techniques remain personal, risks remain inconsistent, and the firm receives little institutional value from what its strongest users have learned.',
-        ],
-      },
-      {
-        heading: 'A power user is not an operating model',
-        paragraphs: [
-          'A strong individual workflow can create real value, but it is fragile. It may depend on one person’s prompt history, personal account, undocumented judgment, or willingness to help colleagues between matters. If that person leaves, gets busy, or misunderstands a risk, the firm has no durable capability to fall back on.',
-          'The goal is not to suppress experimentation. It is to create a path by which good experiments become visible, reviewable, teachable, and safe enough for others to use.',
-        ],
-      },
-      {
-        heading: 'Start with the work, not the tool',
-        paragraphs: [
-          'AI leadership begins by listening to the people closest to the workflow. What do paralegals repeatedly assemble, compare, extract, or chase? Where do associates lose time moving between sources? Which first drafts, chronologies, reviews, or client updates already benefit from AI? Who has found a better method, and what judgment makes it work?',
-          'The leader’s job is to map the inputs, decisions, review points, source material, and failure modes around that method. A clever prompt is not yet a firm workflow. It becomes one only when the firm can explain when to use it, which tools and information are permitted, how output is checked, and who owns the result.',
-        ],
-      },
-      {
-        heading: 'Turn local learning into firm capability',
-        paragraphs: [
-          'Once a workflow proves useful, capture more than the prompt. Preserve the technique, approved tools, examples, source requirements, review standard, and known limits. Train the people who perform that work, identify internal champions, and give them a place to share improvements without creating a new shadow system.',
-          'Not every lawyer needs to use AI identically. Practice groups differ, matters differ, and professional judgment remains personal. But the firm should have a shared baseline, reusable patterns, and a governed path for turning individual learning into collective advantage.',
-        ],
-      },
-      {
-        heading: 'That is the leadership gap',
-        paragraphs: [
-          'Tools do not discover the best work inside a firm. A policy does not spread it. A training session cannot sustain it by itself. Someone must connect the people experimenting, the workflows worth improving, the risks the firm must control, and the operating habits that make learning repeatable.',
-          'The firms that pull ahead will not simply have more AI users. They will get better at learning from their best ones.',
-        ],
-      },
-    ],
-  },
-  {
-    slug: 'ai-policy-is-not-an-adoption-strategy',
-    type: 'Governance',
-    title: 'Your AI policy is not an adoption strategy',
-    deck: 'A policy can establish boundaries. It cannot teach a practice group how to change the work.',
-    readTime: '6 min read',
-    body: [
-      {
-        paragraphs: [
-          'Most law firms began their AI work in the right place: protecting clients. They formed committees, reviewed tools, and published rules about confidential information. That work matters. But many firms are now asking a policy document to do a second job it was never designed to do.',
-          'A policy tells people where the boundaries are. Adoption requires people to see a better way to complete a specific piece of work, trust the new method, and know who will help when it fails. Those are different conditions, owned by different people.',
-        ],
-      },
-      {
-        heading: 'The gap between permission and practice',
-        paragraphs: [
-          'When a firm approves a tool, it has answered a risk question. It has not answered a workflow question. Lawyers still need to decide where the tool belongs, how its output will be checked, whether the economics make sense, and how the result should be explained to a client.',
-          'That is why broad training sessions often produce a burst of experimentation followed by quiet reversion. The tool was introduced, but the work was not redesigned.',
-        ],
-      },
-      {
-        heading: 'Build adoption around matters, not features',
-        paragraphs: [
-          'Start with one recurring task inside one willing team. Describe the current method, including review points and failure modes. Then test whether AI can improve speed, quality, consistency, or lawyer experience without weakening judgment. A useful pilot ends with a documented way of working—not a list of prompts.',
-          'The firms that move well will treat governance and adoption as connected disciplines. Policy sets the perimeter. Practice leaders, knowledge teams, technologists, and lawyers build the path inside it.',
-        ],
-      },
-    ],
-  },
-  {
-    slug: 'billable-hour-is-not-the-first-change',
-    type: 'Firm economics',
-    title: 'The billable hour is not the first thing AI changes',
-    deck: 'Before AI changes the pricing model, it changes who knows how the work actually gets done.',
-    readTime: '7 min read',
-    body: [
-      {
-        paragraphs: [
-          'Conversations about AI and law-firm economics tend to leap straight to the billable hour. It is a compelling question, but it skips the more immediate shift already underway: firms are discovering how little of their production system has been made explicit.',
-          'Ask how a strong first draft becomes a client-ready document and the answer often lives across habits, precedents, inboxes, and the judgment of a few trusted people. AI exposes that hidden system because a tool cannot reliably assist with a process the firm cannot describe.',
-        ],
-      },
-      {
-        heading: 'The first constraint is legibility',
-        paragraphs: [
-          'To automate or accelerate part of a matter, a team must name the inputs, decisions, handoffs, and standards that shape the output. This is not merely process mapping. It is the work of turning tacit expertise into a shared operating method without pretending judgment can be reduced to a checklist.',
-          'That exercise changes where the firm sees value. The scarce resource may not be hours. It may be a partner’s review, a knowledge lawyer’s pattern recognition, or a client’s confidence that the team understands the commercial consequence.',
-        ],
-      },
-      {
-        heading: 'Price after you understand value',
-        paragraphs: [
-          'A firm should not redesign pricing from an abstract prediction about AI efficiency. It should first learn where time is removed, where new review is added, and whether the client experiences a better outcome. That evidence creates a serious conversation about scope and value.',
-          'The economic question is coming. But the firms best positioned to answer it will be the ones that can see their own work clearly enough to know what changed.',
-        ],
-      },
-    ],
-  },
-  {
-    slug: 'what-a-fractional-ai-leader-owns',
-    type: 'Leadership',
-    title: 'What a fractional AI leader should own in a law firm',
-    deck: 'Not the tools. The decisions that connect strategy, professional duty, and daily practice.',
-    readTime: '5 min read',
-    body: [
-      {
-        paragraphs: [
-          'A fractional AI leader should not become the firm’s most expensive prompt engineer. The role exists to create decision capacity while the firm builds the permanent leadership, governance, and operating habits it will eventually need.',
-          'That means owning a coherent agenda across stakeholders who naturally see different parts of the problem: executive leadership, risk, IT, knowledge, innovation, talent, finance, and practice groups.',
-        ],
-      },
-      {
-        heading: 'A decision system, not a tool list',
-        paragraphs: [
-          'The work begins with a view of where the firm is trying to go and which constraints are real. From there, the leader should establish how opportunities are selected, how vendors are evaluated, how pilots graduate, and how learning is captured. Every initiative needs a business owner and a defined operational outcome.',
-          'The role should also make tradeoffs visible. A tool may be technically capable but difficult to govern. A safe use case may have no meaningful adoption path. A popular experiment may not matter to clients or the firm’s strategy. Leadership is the act of naming those tensions early.',
-        ],
-      },
-      {
-        heading: 'The exit is part of the assignment',
-        paragraphs: [
-          'Fractional leadership succeeds when the firm becomes less dependent on it. The engagement should leave behind a prioritized portfolio, clear decision rights, trained internal owners, and a rhythm for reviewing evidence.',
-          'AI will keep moving. The durable advantage is not knowing today’s tools. It is giving the firm a better way to decide what to do next.',
-        ],
-      },
-    ],
-  },
-]
-
-type RouteMetadata = {
-  pathname: string
-  title: string
-  description: string
-  type: 'website' | 'article' | 'profile'
-  canonical: string | null
-  noindex?: boolean
-}
-
-export const routeMetadata: RouteMetadata[] = [
-  {
-    pathname: '/',
-    title: 'caio.legal — AI leadership for law firms',
-    description: 'Practical AI leadership, training, and field notes for law firms.',
-    type: 'website',
-    canonical: 'https://caio.legal/',
-  },
-  ...essays.map((essay) => ({
-    pathname: `/notes/${essay.slug}`,
-    title: `${essay.title} — caio.legal`,
-    description: essay.deck,
-    type: 'article' as const,
-    canonical: `https://caio.legal/notes/${essay.slug}`,
-  })),
-  {
-    pathname: '/about',
-    title: 'About Ken Erwin — caio.legal',
-    description: 'Ken Erwin brings production AI, security, resilience, enterprise change, and legal product-building experience to AI leadership for law firms.',
-    type: 'profile',
-    canonical: 'https://caio.legal/about',
-  },
-  {
-    pathname: '/404',
-    title: 'Page not found — caio.legal',
-    description: 'The requested page could not be found.',
-    type: 'website',
-    canonical: null,
-    noindex: true,
-  },
-]
 
 function updateDocumentMetadata(pathname: string) {
   const page = routeMetadata.find((route) => route.pathname === pathname)
   if (!page) return
 
   document.title = page.title
-  document.querySelector('meta[name="description"]')?.setAttribute('content', page.description)
-  document.querySelector('meta[property="og:title"]')?.setAttribute('content', page.title)
-  document.querySelector('meta[property="og:description"]')?.setAttribute('content', page.description)
-  document.querySelector('meta[property="og:type"]')?.setAttribute('content', page.type)
+  setMetaContent('meta[name="description"]', page.description)
+  setMetaContent('meta[property="og:title"]', page.title)
+  setMetaContent('meta[property="og:description"]', page.description)
+  setMetaContent('meta[property="og:type"]', page.type)
+  setMetaContent('meta[property="og:site_name"]', 'caio.legal')
+  setMetaContent('meta[property="og:image"]', page.image)
+  setMetaContent('meta[property="og:image:alt"]', page.imageAlt)
+  setMetaContent('meta[name="twitter:title"]', page.title)
+  setMetaContent('meta[name="twitter:description"]', page.description)
+  setMetaContent('meta[name="twitter:image"]', page.image)
+  setMetaContent('meta[name="twitter:image:alt"]', page.imageAlt)
+  if (page.canonical) setMetaContent('meta[property="og:url"]', page.canonical)
 
   const canonical = document.querySelector('link[rel="canonical"]')
   if (page.canonical) canonical?.setAttribute('href', page.canonical)
-  else canonical?.remove()
+  else {
+    canonical?.remove()
+    document.querySelector('meta[property="og:url"]')?.remove()
+  }
 }
 
 const notes = {
@@ -215,7 +48,31 @@ const notes = {
 
 type NoteKey = keyof typeof notes
 
-const kenPortrait = 'https://devopslibrary.com/assets/img/authors/ken.jpeg'
+function KenPortrait({ eager = false }: { eager?: boolean }) {
+  return (
+    <picture>
+      <source
+        type="image/avif"
+        srcSet="/images/ken-erwin-400.avif 400w, /images/ken-erwin-800.avif 800w"
+        sizes="(max-width: 700px) 100vw, 42vw"
+      />
+      <source
+        type="image/webp"
+        srcSet="/images/ken-erwin-400.webp 400w, /images/ken-erwin-800.webp 800w"
+        sizes="(max-width: 700px) 100vw, 42vw"
+      />
+      <img
+        src="/images/ken-erwin-800.jpg"
+        alt="Ken Erwin"
+        width="800"
+        height="800"
+        loading={eager ? 'eager' : 'lazy'}
+        decoding="async"
+        fetchPriority={eager ? 'high' : 'auto'}
+      />
+    </picture>
+  )
+}
 
 function Arrow() {
   return <span aria-hidden="true">↗</span>
@@ -471,6 +328,7 @@ function FieldNotes() {
               <div className="essay-meta">
                 <span>{essay.type}</span>
                 <span>{essay.readTime}</span>
+                <time dateTime={essay.published}>{formatDate(essay.published, 'short')}</time>
               </div>
               <h3>{essay.title}</h3>
               <p>{essay.deck}</p>
@@ -490,7 +348,7 @@ function About() {
   return (
     <section className="about" id="about" aria-labelledby="about-title">
       <figure className="about-portrait reveal">
-        <img src={kenPortrait} alt="Ken Erwin" width="800" height="800" />
+        <KenPortrait />
         <figcaption>Ken Erwin · AWS Professional Services · Founder, LogicPearl and ParaLocker</figcaption>
       </figure>
       <div className="about-copy reveal">
@@ -549,7 +407,7 @@ function AboutPage() {
             </div>
           </div>
           <figure className="trust-portrait">
-            <img src={kenPortrait} alt="Ken Erwin" width="800" height="800" />
+            <KenPortrait eager />
             <figcaption>Indianapolis, Indiana</figcaption>
           </figure>
         </section>
@@ -657,7 +515,7 @@ function AboutPage() {
           <div>
             <h2 id="position-title">A legal case changed how I saw the work.</h2>
             <p>
-              I was fortunate to work with a fantastic lawyer who was patient enough to help me understand the law governing my own case. Watching him turn facts, language, procedure, and judgment into a strategy gave me a lasting respect for the work—and showed me the practical burden attorneys and paralegals carry behind every matter. That experience led me to create ParaLocker.
+              I was fortunate to work with a fantastic lawyer who was patient enough to help me understand the law governing my own case. Watching her turn facts, language, procedure, and judgment into a strategy gave me a lasting respect for the work—and showed me the practical burden attorneys and paralegals carry behind every matter. That experience led me to create ParaLocker.
             </p>
             <blockquote className="law-analogy">
               <p>As a technologist, law feels familiar: it is a system of rules expressed through language, where definitions, exceptions, evidence, and edge cases can change the outcome. But it also demands patience and human judgment that software cannot replace.</p>
@@ -764,20 +622,27 @@ function ArticlePage({ essay }: { essay: Essay }) {
   return (
     <>
       <a className="skip-link" href="#article">Skip to article</a>
-      <div className="article-progress" aria-hidden="true"><span style={{ transform: `scaleX(${readingProgress})` }} /></div>
+      <progress className="article-progress" value={readingProgress} max="1" aria-label="Reading progress" />
       <Header page="article" />
       <main id="article" className="article-page">
         <header className="article-hero">
           <a className="article-back" href="/#field-notes">← All briefings</a>
-          <div className="article-meta"><span>{essay.type}</span><span>{essay.readTime}</span></div>
+          <div className="article-meta">
+            <span>{essay.type}</span>
+            <span>{essay.readTime}</span>
+            <time dateTime={essay.published}>Published {formatDate(essay.published)}</time>
+          </div>
           <h1>{essay.title}</h1>
           <p>{essay.deck}</p>
         </header>
         <article className="article-body">
           <aside>
             <span>Filed by</span>
-            <strong>caio.legal</strong>
-            <span>AI leadership for law firms</span>
+            <strong>By <a href="/about">Ken Erwin</a></strong>
+            <span>AI leadership advisor for law firms</span>
+            <span className="author-credentials">AWS Professional Services · Founder, LogicPearl and ParaLocker</span>
+            <span>Published</span>
+            <time dateTime={essay.published}>{formatDate(essay.published)}</time>
           </aside>
           <div className="article-prose">
             {essay.body.map((section, index) => (
@@ -786,6 +651,17 @@ function ArticlePage({ essay }: { essay: Essay }) {
                 {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
               </section>
             ))}
+            <section className="article-sources" aria-labelledby="sources-title">
+              <h2 id="sources-title">Primary sources</h2>
+              <ol>
+                {essay.sources.map((source) => (
+                  <li key={source.url}>
+                    <a href={source.url} target="_blank" rel="noreferrer">{source.title}</a>
+                    <span>{source.publisher}</span>
+                  </li>
+                ))}
+              </ol>
+            </section>
             <div className="article-coda">
               <p>What decision is your firm trying to make?</p>
               <a href="mailto:hello@caio.legal?subject=A%20question%20from%20your%20field%20notes">Continue the conversation <Arrow /></a>

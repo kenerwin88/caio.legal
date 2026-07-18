@@ -2,154 +2,182 @@
 
 Audit date: 2026-07-17
 
-## Critical — complete before launch
+Current SEO health score: **72/100**
 
-### 1. Restore public DNS and canonical host routing
+## Phase 1 implementation status — complete locally
 
-**Why:** Search engines and users cannot reach the domain. The apex has no address/alias records and `www` is NXDOMAIN.
+Completed on 2026-07-17 and verified in the production build:
 
-**Work:**
+- connected `WebSite`, `ProfessionalService`, `Person`, `ProfilePage`, `BlogPosting`, `BreadcrumbList`, and visible-service `Service` JSON-LD using stable `@id` references;
+- named Ken Erwin bylines, linked author profile, Git-backed publication/modification dates, author credentials, and official ABA/NIST sources on every briefing;
+- improved route titles and descriptions plus complete Open Graph and Twitter card metadata with a branded 1200×630 image;
+- self-hosted fonts and portrait, responsive AVIF/WebP portrait sources, no-JavaScript-safe reveal behavior, and larger coarse-pointer hit areas;
+- HSTS, a locally exercised Content-Security-Policy, immutable font/image caching, and accurate sitemap `<lastmod>` values;
+- an expanded build verifier covering initial HTML, canonical URLs, metadata, schema, provenance, local assets, 404 behavior, security headers, and sitemap dates.
 
-- Route `caio.legal` to the configured Cloudflare tunnel.
-- Add `www.caio.legal` and permanently redirect it to `https://caio.legal/`.
-- Confirm HTTP → HTTPS and `www` → apex use one-hop 301/308 redirects.
-- Verify the certificate covers both names.
+The live score remains the pre-implementation audit baseline until these changes are deployed and recrawled. The only Phase 1 host item outside this repository is the `www.caio.legal` redirect: Cloudflare requires an account-level Bulk Redirect plus a proxied DNS record. That setting has not been changed or deployed.
 
-**Acceptance:** `curl -I https://caio.legal/` returns 200, `https://www.caio.legal/` redirects once to the apex, and DNS resolves from public resolvers.
+## High priority — next 1–2 weeks
 
-### 2. Replace metadata-only “prerendering” with true static HTML
+### 1. Implement connected structured data
 
-**Why:** All six generated pages contain zero visible HTML words or headings until JavaScript runs.
+Add a reusable JSON-LD graph using stable IDs:
 
-**Work:**
+- homepage: `WebSite`, `Organization` or `ProfessionalService`, and `Person`;
+- About page: `ProfilePage` with Ken as `mainEntity`;
+- briefings: `BlogPosting` plus `BreadcrumbList`;
+- future commercial pages: `Service` plus `BreadcrumbList`.
 
-- Adopt a static-generation/SSR path that renders the homepage, about page, and each article into its route HTML.
-- Keep route-specific title, description, canonical, and Open Graph values in the same template/data source.
-- Ensure articles remain usable with JavaScript disabled.
+Do not use `LegalService` unless the business is actually providing legal services. Keep the existing “not legal advice” boundary consistent in visible copy and schema.
 
-**Acceptance:** A direct HTML fetch of every sitemap URL contains its H1, article copy, internal links, and author information.
+**Acceptance:** every route passes Schema.org validation; entities connect through stable `@id` values; no placeholder or invented facts appear.
 
-### 3. Return real 404 responses
-
-**Why:** Unknown URLs currently return 200 with homepage content, creating soft 404s.
-
-**Work:**
-
-- Add an explicit Not Found route/page.
-- Configure the production server to return HTTP 404 for unknown paths.
-- Normalize trailing slashes with redirects instead of duplicate 200 responses where practical.
-
-**Acceptance:** `/definitely-not-a-page` and `/notes/not-a-real-note` return 404 and are not canonicalized to the homepage.
-
-## High — first week after the launch blockers
-
-### 4. Add structured data
-
-Implement and validate:
-
-- `WebSite` + `Organization`/`ProfessionalService` on the homepage;
-- `Person` on `/about`;
-- `Article`/`BlogPosting` and `BreadcrumbList` on every field note;
-- `Service` and `BreadcrumbList` on new service pages.
-
-Use stable `@id` values to connect Ken, the site, and the provider. Do not use `LegalService` unless the legal/business facts support it.
-
-### 5. Add visible article provenance
+### 2. Add article provenance
 
 - Change “Filed by caio.legal” to “By Ken Erwin.”
-- Link the author to `/about`.
-- Add accurate publication and modification dates.
-- Add a concise author bio/credential block.
-- Add selective primary-source citations where a factual market or ethics claim is made.
+- Link the byline to `/about`.
+- Add accurate publication and modification dates to the essay data model and visible article header.
+- Add a concise author credential line.
+- Cite primary sources for factual, ethics, security, or market claims.
 
-### 6. Create intent-matched service pages
+**Acceptance:** each article visibly identifies its author and dates, and its BlogPosting schema matches the page.
 
-Publish substantial pages for:
+### 3. Create intent-specific service pages
+
+Recommended initial routes:
 
 - `/fractional-caio-law-firms`
 - `/ai-governance-law-firms`
 - `/law-firm-ai-exposure-assessment`
 
-Each page should explain audience, problems, scope, process, deliverables/decisions, proof, boundaries, FAQ, and next step. Link to these pages from the homepage and relevant articles.
+Each page should state audience, problem, scope, process, deliverables, decision rights, boundaries, proof, expected next step, and a contact CTA. Link them from the homepage and relevant briefings.
 
-### 7. Complete social metadata
+**Acceptance:** each page has a unique search intent, 800+ words only where needed for complete coverage, a self-referencing canonical, Service schema, and at least three contextual internal links.
 
-- Add a default 1200×630 branded image.
-- Add article-specific images where useful.
-- Add `og:image`, `og:image:width`, `og:image:height`, `og:image:alt`, `og:url`, and `og:site_name`.
-- Add Twitter summary-large-image tags.
+### 4. Establish search-engine ownership and discovery
 
-### 8. Fix mobile render delay and article contrast
+- Verify `https://caio.legal/` in Google Search Console and Bing Webmaster Tools.
+- Submit `https://caio.legal/sitemap.xml`.
+- Inspect all six current canonical URLs.
+- Request indexing only after schema and metadata updates are live.
+- Record the first 28-day baseline for impressions, queries, indexed pages, and crawl errors.
 
-- Remove or shorten the delayed reveal on above-the-fold H1 text.
-- Eliminate the Google Fonts CSS `@import` chain; self-host/subset/preload the critical font.
-- Raise `--citation-gray` contrast for 11.84px article-aside labels from 4.31:1 to at least 4.5:1.
+**Acceptance:** both platforms verify the site; the sitemap is accepted; all intended pages are eligible for indexing.
 
-**Acceptance:** mobile lab LCP is below 2.5s on the homepage and article; Lighthouse accessibility returns 100 on the article.
+### 5. Complete social metadata
 
-## Medium — first month
+- Create a branded 1200×630 default image.
+- Add `og:image`, dimensions, alt, `og:url`, and `og:site_name`.
+- Add Twitter `summary_large_image`, title, description, and image tags.
+- Use article-specific images only when they add real context.
 
-### 9. Optimize and internalize images
+**Acceptance:** homepage, About, and article URLs render complete link previews in common social debuggers.
 
+## Medium priority — next month
+
+### 6. Strengthen the briefing library
+
+Prioritize depth over volume:
+
+1. Expand “What a fractional AI leader should own” into a comparison/evaluation resource.
+2. Expand “Your AI policy is not an adoption strategy” with a governance-to-adoption operating model.
+3. Expand “The billable hour…” with concrete examples and evidence.
+4. Preserve the concise essay voice while adding frameworks, examples, and sources.
+
+**Acceptance:** every briefing fully answers its target question and contains at least one concrete, independently useful framework or example.
+
+### 7. Build internal topic pathways
+
+- Create `/briefings` as a crawlable publication index.
+- Add breadcrumbs to every briefing.
+- Add two or three related briefings at the end of each article.
+- Link articles to the service page that best matches their topic.
+- Use descriptive anchor text rather than repeated generic CTAs.
+
+**Acceptance:** every indexable page is reachable within three clicks; no briefing is an internal-link dead end.
+
+### 8. Remove external performance dependencies
+
+- Self-host and subset IBM Plex Sans, IBM Plex Mono, and Source Serif 4.
+- Replace the CSS `@import` with local font declarations and selective preloads.
 - Host Ken's portrait on caio.legal.
-- Generate AVIF/WebP variants and responsive sizes.
-- Lazy-load the below-fold homepage instance.
-- Keep explicit dimensions and useful alt text.
+- Serve AVIF/WebP variants with an appropriate fallback.
+- Keep explicit dimensions and descriptive alt text.
 
-### 10. Improve titles and snippets
+**Acceptance:** the initial render does not depend on Google Fonts or devopslibrary.com; lab LCP remains under 2.5s.
 
-- Homepage: test `Fractional CAIO for Law Firms | caio.legal` or a close variant.
-- About: include the law-firm AI leadership context.
-- Shorten the 90-character “best AI workflow” article title tag while retaining the full H1.
-- Enrich the shortest article descriptions with the audience/context where it reads naturally.
+### 9. Make progressive enhancement robust
 
-### 11. Build internal topic pathways
+The `.reveal` class hides content until JavaScript adds `.is-visible`.
 
-- Add related briefings to every article.
-- Add contextual links between governance, adoption, economics, and leadership notes.
-- Create a crawlable `/briefings` index.
-- Add breadcrumbs.
+- Default critical content to visible.
+- Apply hidden/animated states only after JavaScript establishes that animation is available.
+- Preserve the existing reduced-motion behavior.
 
-### 12. Expand evidence-led content
+**Acceptance:** the full page remains visible and usable with JavaScript disabled.
 
-Prioritize a small set of high-value pages before increasing volume:
+### 10. Complete host and header hygiene
 
-- law-firm AI governance framework;
-- AI vendor review checklist for law firms;
-- responsible AI pilot template;
-- executive AI briefing agenda;
-- how to measure law-firm AI adoption;
-- AI incident-response responsibilities;
-- fractional CAIO vs. committee vs. full-time hire.
+- Configure `www.caio.legal` and redirect once to the apex, or explicitly accept that it will not resolve.
+- Add HSTS after verifying permanent HTTPS coverage.
+- Add and test a Content-Security-Policy.
+- Review whether `Access-Control-Allow-Origin: *` is necessary on HTML responses.
 
-Include concise answer blocks, original frameworks, primary-source citations, and explicit links to relevant services.
+**Acceptance:** canonical host behavior is intentional, redirects are one hop, and the security policy does not break fonts, images, email links, or hydration.
 
-## Low / ongoing
+### 11. Improve mobile touch targets
 
-### 13. Add AI-discovery support
+Increase vertical padding or hit-area size for:
 
-- Publish an optional `/llms.txt` with canonical links and a concise site description.
-- Keep it aligned with the sitemap and visible information architecture.
-- Treat it as supplemental, not a replacement for static HTML or schema.
+- the brand link;
+- inline/contact links that render below 48px high;
+- the “See what is at stake” jump link.
 
-### 14. Establish measurement
+**Acceptance:** primary mobile controls meet roughly 48×48px touch guidance without changing the visual hierarchy.
 
-After launch:
+## Low priority / backlog
 
-- verify Google Search Console and Bing Webmaster Tools;
-- submit `https://caio.legal/sitemap.xml`;
-- inspect all six URLs;
-- track non-brand impressions, indexed pages, CTR, qualified contact starts, and service-page conversions;
-- capture the first SEO drift baseline;
-- rerun Lighthouse and CrUX checks once field data exists.
+### 12. Improve snippets and titles
 
-## Suggested implementation sequence
+- Expand the homepage meta description to explain the audience and value proposition.
+- Shorten the 90-character “best AI workflow” title tag while keeping the full H1.
+- Test whether 64–65 character article titles truncate in target result layouts.
 
-1. DNS, HTTPS, canonical-host redirect.
-2. Real static rendering and 404 behavior.
-3. Schema, authorship/dates, social metadata.
-4. Font/image/mobile performance fixes.
-5. Three service pages and stronger internal linking.
-6. Search Console/Bing setup and launch verification.
-7. Content cluster expansion based on query/impression evidence.
+### 13. Add accurate sitemap modification dates
 
+Generate `<lastmod>` from actual content modification dates, not build timestamps.
+
+### 14. Add IndexNow if operationally useful
+
+Use IndexNow for new or updated briefings after Bing Webmaster Tools is configured. Do not treat it as a Google indexing mechanism.
+
+### 15. Add `llms.txt` after the site structure stabilizes
+
+Include the homepage, About page, service pages, strongest briefings, and a concise description of the site's authority and scope. Treat this as optional AI-crawler guidance, not a ranking guarantee.
+
+### 16. Improve off-site measurement
+
+Configure free Bing Webmaster and/or Moz access so future audits can measure referring domains, anchors, and link quality. Do not disavow links without evidence of a manual action or a clearly harmful pattern.
+
+## 90-day outcome targets
+
+| Outcome | Target |
+|---|---|
+| Indexed canonical pages | 100% of intended pages |
+| Search Console coverage errors | 0 unresolved critical errors |
+| Dedicated commercial pages | 3 live and internally linked |
+| Briefings with byline/date/schema | 100% |
+| Valid structured data | 0 errors on all indexable pages |
+| Field CWV | Good at the 75th percentile when data becomes available |
+| Relevant referring domains | First 5–10 editorial/professional domains |
+| Organic query baseline | Established and reviewed monthly |
+
+## Recommended execution order
+
+1. Search Console/Bing verification and baseline.
+2. Article provenance plus schema foundation.
+3. Social metadata and branded preview image.
+4. Three service pages and internal linking.
+5. Briefing expansion and evidence-led resources.
+6. Fonts, portrait, progressive enhancement, headers, and touch polish.
+7. Optional IndexNow and `llms.txt`.

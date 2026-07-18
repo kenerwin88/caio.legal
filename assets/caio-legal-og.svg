@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">caio.legal — AI leadership for law firms</title>
+  <desc id="desc">A dark navy caio.legal social card with cobalt and rose editorial accents.</desc>
+  <rect width="1200" height="630" fill="#11142f"/>
+  <rect x="0" y="0" width="18" height="630" fill="#f05b70"/>
+  <rect x="840" y="0" width="360" height="630" fill="#3157ff"/>
+  <path d="M840 442H1200" stroke="#aebcff" stroke-width="2" opacity=".65"/>
+  <circle cx="1020" cy="191" r="83" fill="none" stroke="#f05b70" stroke-width="14"/>
+  <path d="M965 191h110M1020 136v110" stroke="#f2f5fb" stroke-width="8" stroke-linecap="square"/>
+  <text x="78" y="105" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" letter-spacing="-1">caio<tspan fill="#f05b70">.legal</tspan></text>
+  <text x="78" y="250" fill="#aebcff" font-family="Courier New, monospace" font-size="24" letter-spacing="3">INDEPENDENT CAIO ADVISORY</text>
+  <text x="78" y="345" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="70" font-weight="600" letter-spacing="-3">AI leadership</text>
+  <text x="78" y="426" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="70" font-weight="600" letter-spacing="-3">for law firms.</text>
+  <text x="78" y="550" fill="#b8bdca" font-family="Georgia, serif" font-size="28">Govern the risk. Build the capability.</text>
+  <text x="888" y="515" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="600">Ken Erwin</text>
+  <text x="888" y="554" fill="#dfe5ff" font-family="Courier New, monospace" font-size="17" letter-spacing="1">CAIO.LEGAL</text>
+</svg>
