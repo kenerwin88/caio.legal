@@ -723,12 +723,12 @@ function ArticlePage({ essay }: { essay: Essay }) {
         </header>
         <article className="article-body">
           <aside>
-            <span>Filed by</span>
-            <strong>By <a href="/about">Ken Erwin</a></strong>
+            <span>Author</span>
+            <strong><a href="/about">Ken Erwin</a></strong>
             <span>AI leadership advisor for law firms</span>
             <span className="author-credentials">AWS Professional Services · Founder, LogicPearl and ParaLocker</span>
-            <span>Published</span>
-            <time dateTime={essay.published}>{formatDate(essay.published)}</time>
+            <span className="article-aside-date">Published</span>
+            <time className="article-aside-date" dateTime={essay.published}>{formatDate(essay.published)}</time>
           </aside>
           <div className="article-prose">
             {essay.body.map((section, index) => (

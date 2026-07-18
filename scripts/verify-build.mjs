@@ -139,7 +139,7 @@ for (const page of pages) {
   }
 
   if (page.article) {
-    assert.match(html, /By <a href="\/about">Ken Erwin<\/a>/, `${page.file} must name and link the author`)
+    assert.match(html, /<strong><a href="\/about">Ken Erwin<\/a><\/strong>/, `${page.file} must name and link the author`)
     assert.match(html, new RegExp(`<time dateTime="${publishedDate}">`), `${page.file} must expose its publication date`)
     assert.match(html, /class="article-sources"/, `${page.file} must expose primary sources`)
     assert.match(html, /americanbar\.org/, `${page.file} must cite the ABA's primary guidance`)
