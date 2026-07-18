@@ -87,6 +87,7 @@ for (const page of pages) {
   assert.ok(html.includes(page.expectedText), `${page.file} must contain its page content`)
   assert.ok(html.includes(`<link rel="canonical" href="${page.canonical}" />`), `${page.file} must contain its canonical link element`)
   assert.doesNotMatch(html, /\/src\/main\.tsx/, `${page.file} must reference production assets`)
+  assert.ok(html.includes('static.cloudflareinsights.com/beacon.min.js'), `${page.file} must include the analytics beacon`)
 
   const description = metaContent(html, 'name', 'description')
   assert.ok(description && description.length >= 100 && description.length <= 170, `${page.file} must have a useful meta description`)
@@ -174,7 +175,8 @@ assert.doesNotMatch(notFound, /application\/ld\+json/, '404.html must not contai
 const headers = await readFile(resolve('dist', '_headers'), 'utf8')
 assert.match(headers, /Strict-Transport-Security: max-age=31536000/, 'Headers must enable HSTS')
 assert.match(headers, /Content-Security-Policy:/, 'Headers must define a CSP')
-assert.match(headers, /script-src 'self'/, 'CSP must restrict scripts to the site')
+assert.match(headers, /script-src 'self' https:\/\/static\.cloudflareinsights\.com/, 'CSP must allow only site scripts and the analytics beacon')
+assert.match(headers, /connect-src 'self' https:\/\/cloudflareinsights\.com/, 'CSP must allow analytics beacon reporting')
 assert.match(headers, /font-src 'self'/, 'CSP must support self-hosted fonts only')
 assert.doesNotMatch(headers, /unsafe-inline/, 'CSP must not allow inline scripts or styles')
 
