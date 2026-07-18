@@ -724,6 +724,13 @@ footer { padding: clamp(3.5rem, 7vw, 6rem) var(--page-pad) 2rem; background: var
 .article-sources li { padding: 0.65rem 0 0.85rem 0.3rem; }
 .article-sources a { color: var(--argument-cobalt); font-family: var(--display); font-size: 1rem; font-weight: 600; line-height: 1.4; text-underline-offset: 0.25rem; }
 .article-sources span { display: block; margin-top: 0.25rem; color: var(--citation-gray); font-family: var(--utility); font-size: 0.68rem; line-height: 1.5; letter-spacing: 0.04em; text-transform: uppercase; }
+.article-share { margin-top: 3.5rem; padding: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; background: var(--white); border: 1px solid var(--rule); }
+.article-share > span { color: var(--citation-gray); font-family: var(--utility); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.article-share > div { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; }
+.article-share a,
+.article-share button { padding: 0; color: var(--argument-cobalt); background: transparent; border: 0; font-family: var(--utility); font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; text-underline-offset: 0.3rem; cursor: pointer; }
+.article-share a:hover,
+.article-share button:hover { color: var(--briefing-navy); }
 .article-related { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--rule); }
 .article-related h2 { font-size: clamp(1.6rem, 2.5vw, 2.2rem); }
 .related-list { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
@@ -856,6 +863,7 @@ footer { padding: clamp(3.5rem, 7vw, 6rem) var(--page-pad) 2rem; background: var
   .article-body aside { padding-bottom: 1.5rem; border-bottom: 1px solid var(--rule); }
   .article-body aside .article-aside-date { display: none; }
   .article-meta { flex-wrap: wrap; gap: 0.55rem 1rem; }
+  .article-share { align-items: flex-start; flex-direction: column; }
 }
 
 @media (pointer: coarse) {
@@ -866,6 +874,8 @@ footer { padding: clamp(3.5rem, 7vw, 6rem) var(--page-pad) 2rem; background: var
   .read-link,
   .article-back,
   .article-sources a,
+  .article-share a,
+  .article-share button,
   .related-all,
   .article-coda a,
   .about-actions a,

@@ -1,5 +1,14 @@
 import { useEffect, useState } from 'react'
-import { calendlyUrl, contactEmail, essays, formatDate, routeMetadata, type Essay } from './site-data'
+import {
+  calendlyUrl,
+  contactEmail,
+  essaysByNewest,
+  formatDate,
+  homepageEssays,
+  routeMetadata,
+  siteUrl,
+  type Essay,
+} from './site-data'
 
 function setMetaContent(selector: string, content: string) {
   document.querySelector(selector)?.setAttribute('content', content)
@@ -351,7 +360,7 @@ function FieldNotes() {
           </div>
         </div>
         <div className="essay-list">
-          {essays.map((essay, index) => (
+          {homepageEssays.map((essay, index) => (
             <a className="essay-card reveal" href={`/notes/${essay.slug}`} key={essay.slug}>
               <div className="essay-meta">
                 <span>{essay.type}</span>
@@ -573,7 +582,7 @@ function BriefingsPage() {
     updateDocumentMetadata('/briefings')
   }, [])
 
-  const topics = [...new Set(essays.map((essay) => essay.type))]
+  const topics = [...new Set(essaysByNewest.map((essay) => essay.type))]
 
   return (
     <>
@@ -586,10 +595,10 @@ function BriefingsPage() {
             <span aria-hidden="true">/</span>
             <span aria-current="page">Briefings</span>
           </nav>
-          <div className="hero-kicker">CAIO briefings</div>
-          <h1>Clear positions on the decisions AI is forcing law firms to make.</h1>
+          <div className="hero-kicker">Briefings for law firm leadership</div>
+          <h1>Decisions your partnership can defend.</h1>
           <p>
-            Short, sourced briefings for managing partners, practice leaders, and the people accountable for how a firm adopts AI. No vendor pitch, no hype—the operating judgment behind each choice, grounded in ABA guidance and NIST frameworks.
+            Sourced guidance for managing partners, executive committee members, practice leaders, and firm general counsel deciding where AI belongs in the work. Each briefing connects technical capability, professional responsibility, and firm economics to a decision your leadership can examine, explain, and act on.
           </p>
           <div className="briefings-topics" aria-label="Topics covered">
             {topics.map((topic) => <span key={topic}>{topic}</span>)}
@@ -597,7 +606,7 @@ function BriefingsPage() {
         </header>
         <section className="briefings-list" aria-label="All briefings">
           <div className="essay-list">
-            {essays.map((essay, index) => (
+            {essaysByNewest.map((essay, index) => (
               <a className="essay-card" href={`/notes/${essay.slug}`} key={essay.slug}>
                 <div className="essay-meta">
                   <span>{essay.type}</span>
@@ -638,6 +647,36 @@ function Footer() {
         <p>© {new Date().getFullYear()} caio.legal</p>
       </div>
     </footer>
+  )
+}
+
+function ArticleShare({ essay }: { essay: Essay }) {
+  const [copyLabel, setCopyLabel] = useState('Copy link')
+  const canonicalUrl = `${siteUrl}/notes/${essay.slug}`
+  const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonicalUrl)}`
+  const emailUrl = `mailto:?subject=${encodeURIComponent(essay.title)}&body=${encodeURIComponent(`${essay.deck}\n\n${canonicalUrl}`)}`
+
+  const copyLink = async () => {
+    try {
+      if (!navigator.clipboard) throw new Error('Clipboard API unavailable')
+      await navigator.clipboard.writeText(canonicalUrl)
+      setCopyLabel('Link copied')
+    } catch {
+      window.prompt('Copy this link:', canonicalUrl)
+    }
+  }
+
+  return (
+    <section className="article-share" aria-labelledby="share-title">
+      <span id="share-title">Share this briefing</span>
+      <div>
+        <a href={linkedInUrl} target="_blank" rel="noreferrer">LinkedIn <Arrow /></a>
+        <a href={emailUrl}>Email <Arrow /></a>
+        <button type="button" data-share-url={canonicalUrl} onClick={copyLink}>
+          <span aria-live="polite">{copyLabel}</span>
+        </button>
+      </div>
+    </section>
   )
 }
 
@@ -748,10 +787,11 @@ function ArticlePage({ essay }: { essay: Essay }) {
                 ))}
               </ol>
             </section>
+            <ArticleShare essay={essay} />
             <section className="article-related" aria-labelledby="related-title">
               <h2 id="related-title">More briefings</h2>
               <div className="related-list">
-                {essays
+                {essaysByNewest
                   .filter((item) => item.slug !== essay.slug)
                   .sort((a, b) => Number(b.type === essay.type) - Number(a.type === essay.type))
                   .slice(0, 2)
@@ -801,7 +841,7 @@ export function App({ pathname }: { pathname: string }) {
   if (normalizedPath === '/about') return <AboutPage />
   if (normalizedPath === '/briefings') return <BriefingsPage />
   const slug = normalizedPath.match(/^\/notes\/([^/]+)$/)?.[1]
-  const essay = essays.find((item) => item.slug === slug)
+  const essay = essaysByNewest.find((item) => item.slug === slug)
   if (essay) return <ArticlePage essay={essay} />
   if (normalizedPath === '/') return <Home />
   return <NotFoundPage />

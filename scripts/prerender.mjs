@@ -4,9 +4,9 @@ import { pathToFileURL } from 'node:url'
 
 const root = resolve('dist')
 const serverRoot = resolve('.ssr-dist')
-const siteUrl = 'https://caio.legal'
+const verificationRoot = resolve('.build-artifacts')
 const shell = await readFile(resolve(root, 'index.html'), 'utf8')
-const { render, routeMetadata, structuredDataForPath } = await import(pathToFileURL(resolve(serverRoot, 'entry-server.js')).href)
+const { contentManifest, render, routeMetadata, siteUrl, structuredDataForPath } = await import(pathToFileURL(resolve(serverRoot, 'entry-server.js')).href)
 
 function escapeAttribute(value) {
   return value.replaceAll('&', '&amp;').replaceAll('"', '&quot;')
@@ -96,5 +96,9 @@ const sitemap = [
 ].join('\n')
 
 await writeFile(resolve(root, 'sitemap.xml'), sitemap)
+
+await rm(verificationRoot, { recursive: true, force: true })
+await mkdir(verificationRoot, { recursive: true })
+await writeFile(resolve(verificationRoot, 'content-manifest.json'), `${JSON.stringify(contentManifest, null, 2)}\n`)
 
 await rm(serverRoot, { recursive: true, force: true })

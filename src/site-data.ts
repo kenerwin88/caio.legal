@@ -38,6 +38,7 @@ const nistAiRmfPlaybook: Source = {
 
 export const calendlyUrl = 'https://calendly.com/kenerwin/30min'
 export const contactEmail = 'hello@caio.legal'
+export const siteUrl = 'https://caio.legal'
 
 const publishedDate = '2026-07-17'
 const longDateFormatter = new Intl.DateTimeFormat('en-US', {
@@ -58,7 +59,7 @@ export function formatDate(date: string, format: 'long' | 'short' = 'long') {
   return formatter.format(new Date(`${date}T12:00:00Z`))
 }
 
-export const essays: Essay[] = [
+const essays: Essay[] = [
   {
     slug: 'your-best-ai-work-is-probably-hidden',
     type: 'Leadership',
@@ -211,6 +212,28 @@ export const essays: Essay[] = [
   },
 ]
 
+export const essaysByNewest = [...essays].sort((a, b) => b.published.localeCompare(a.published))
+export const homepageEssays = essaysByNewest.slice(0, 4)
+const latestBriefingModifiedDate = essaysByNewest.reduce(
+  (latest, essay) => essay.modified > latest ? essay.modified : latest,
+  publishedDate,
+)
+
+export const contentManifest = {
+  articles: essaysByNewest.map((essay) => ({
+    slug: essay.slug,
+    pathname: `/notes/${essay.slug}`,
+    canonical: `${siteUrl}/notes/${essay.slug}`,
+    title: essay.title,
+    seoTitle: essay.seoTitle,
+    seoDescription: essay.seoDescription,
+    published: essay.published,
+    modified: essay.modified,
+    sources: essay.sources,
+  })),
+  homepageArticlePaths: homepageEssays.map((essay) => `/notes/${essay.slug}`),
+}
+
 type RouteMetadata = {
   pathname: string
   title: string
@@ -227,7 +250,6 @@ type RouteMetadata = {
 
 type SchemaNode = Record<string, unknown>
 
-const siteUrl = 'https://caio.legal'
 const websiteId = `${siteUrl}/#website`
 const organizationId = `${siteUrl}/#organization`
 const personId = `${siteUrl}/about#ken-erwin`
@@ -321,19 +343,19 @@ export const routeMetadata: RouteMetadata[] = [
     canonical: `${siteUrl}/`,
     image: socialImageUrl,
     imageAlt: socialImageAlt,
-    lastModified: publishedDate,
+    lastModified: latestBriefingModifiedDate,
   },
   {
     pathname: '/briefings',
-    title: 'CAIO Briefings: AI Decisions Facing Law Firms | caio.legal',
-    description: 'Every caio.legal briefing on AI leadership, governance, firm economics, and adoption—clear positions on the decisions law firm leaders must now own.',
+    title: 'AI Briefings for Law Firm Leaders | caio.legal',
+    description: 'Sourced AI briefings for managing partners, executive committees, practice leaders, and firm general counsel making governance, adoption, and investment decisions.',
     type: 'website',
     canonical: `${siteUrl}/briefings`,
     image: socialImageUrl,
     imageAlt: socialImageAlt,
-    lastModified: publishedDate,
+    lastModified: latestBriefingModifiedDate,
   },
-  ...essays.map((essay) => ({
+  ...essaysByNewest.map((essay) => ({
     pathname: `/notes/${essay.slug}`,
     title: essay.seoTitle,
     description: essay.seoDescription,
@@ -384,15 +406,15 @@ export function structuredDataForPath(pathname: string): SchemaNode | null {
           '@type': 'CollectionPage',
           '@id': `${briefingsUrl}#collection`,
           url: briefingsUrl,
-          name: 'CAIO Briefings: AI Decisions Facing Law Firms',
-          description: 'Every caio.legal briefing on AI leadership, governance, firm economics, and adoption for law firms.',
+          name: 'AI Briefings for Law Firm Leaders',
+          description: 'Sourced guidance for managing partners, executive committees, practice leaders, and firm general counsel making consequential AI decisions.',
           isPartOf: { '@id': websiteId },
           inLanguage: 'en-US',
-          dateModified: publishedDate,
+          dateModified: latestBriefingModifiedDate,
           mainEntity: {
             '@type': 'ItemList',
             '@id': `${briefingsUrl}#list`,
-            itemListElement: essays.map((essay, index) => ({
+            itemListElement: essaysByNewest.map((essay, index) => ({
               '@type': 'ListItem',
               position: index + 1,
               name: essay.title,
@@ -434,7 +456,7 @@ export function structuredDataForPath(pathname: string): SchemaNode | null {
   }
 
   const slug = pathname.match(/^\/notes\/([^/]+)$/)?.[1]
-  const essay = essays.find((item) => item.slug === slug)
+  const essay = essaysByNewest.find((item) => item.slug === slug)
   if (!essay) return null
 
   const canonical = `${siteUrl}/notes/${essay.slug}`
