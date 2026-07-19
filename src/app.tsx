@@ -672,7 +672,7 @@ function ArticleShare({ essay }: { essay: Essay }) {
       <div>
         <a href={linkedInUrl} target="_blank" rel="noreferrer">LinkedIn <Arrow /></a>
         <a href={emailUrl}>Email <Arrow /></a>
-        <button type="button" data-share-url={canonicalUrl} onClick={copyLink}>
+        <button type="button" data-share-url={canonicalUrl} onClick={() => void copyLink()}>
           <span aria-live="polite">{copyLabel}</span>
         </button>
       </div>
@@ -692,13 +692,17 @@ function Home() {
 
     const hashTarget = window.location.hash.slice(1)
     let frame = 0
+    let disposed = false
     if (hashTarget) {
-      document.fonts.ready.then(() => {
+      const scrollToHashTarget = () => {
+        if (disposed) return
         frame = requestAnimationFrame(() => document.getElementById(hashTarget)?.scrollIntoView())
-      })
+      }
+      void document.fonts.ready.then(scrollToHashTarget, scrollToHashTarget)
     }
 
     return () => {
+      disposed = true
       observer.disconnect()
       if (frame) cancelAnimationFrame(frame)
     }
@@ -730,17 +734,26 @@ function ArticlePage({ essay }: { essay: Essay }) {
   }, [essay])
 
   useEffect(() => {
+    let frame = 0
     const updateReadingProgress = () => {
       const available = document.documentElement.scrollHeight - window.innerHeight
       setReadingProgress(available > 0 ? Math.min(1, Math.max(0, window.scrollY / available)) : 0)
     }
+    const scheduleReadingProgressUpdate = () => {
+      if (frame) return
+      frame = window.requestAnimationFrame(() => {
+        frame = 0
+        updateReadingProgress()
+      })
+    }
 
     updateReadingProgress()
-    window.addEventListener('scroll', updateReadingProgress, { passive: true })
-    window.addEventListener('resize', updateReadingProgress)
+    window.addEventListener('scroll', scheduleReadingProgressUpdate, { passive: true })
+    window.addEventListener('resize', scheduleReadingProgressUpdate)
     return () => {
-      window.removeEventListener('scroll', updateReadingProgress)
-      window.removeEventListener('resize', updateReadingProgress)
+      window.removeEventListener('scroll', scheduleReadingProgressUpdate)
+      window.removeEventListener('resize', scheduleReadingProgressUpdate)
+      if (frame) window.cancelAnimationFrame(frame)
     }
   }, [])
 

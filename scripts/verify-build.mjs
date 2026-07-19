@@ -126,6 +126,7 @@ for (const page of pages) {
   assert.match(html, /<html lang="en" class="no-js">/, `${page.file} must default to no-JS-safe rendering`)
   assert.match(html, /<div id="root">\s*<(?!\/div>)/, `${page.file} must contain rendered HTML`)
   assert.match(html, /<h1[ >]/, `${page.file} must contain an H1 in the initial HTML`)
+  assert.equal((html.match(/<h1[ >]/g) ?? []).length, 1, `${page.file} must contain exactly one H1`)
   assert.ok(html.includes(page.expectedText), `${page.file} must contain its page content`)
   assert.ok(html.includes(`<link rel="canonical" href="${page.canonical}" />`), `${page.file} must contain its canonical link element`)
   assert.doesNotMatch(html, /\/src\/main\.tsx/, `${page.file} must reference production assets`)
@@ -251,7 +252,7 @@ for (const page of pages) {
   const expectedDate = page.article ? page.modified : '\\d{4}-\\d{2}-\\d{2}'
   assert.match(
     sitemap,
-    new RegExp(`<loc>${page.canonical.replace(/[.*+?^\${}()|[\]\\]/g, '\\$&')}</loc>\\s*<lastmod>${expectedDate}</lastmod>`),
+    new RegExp(`<loc>${page.canonical.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</loc>\\s*<lastmod>${expectedDate}</lastmod>`),
     `Sitemap must carry the canonical URL and current modified date for ${page.file}`,
   )
 }

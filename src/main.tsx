@@ -9,7 +9,8 @@ declare global {
   var __caioRoot: Root | undefined
 }
 
-const rootElement = document.getElementById('root')!
+const rootElement = document.getElementById('root')
+if (!rootElement) throw new Error('Unable to start caio.legal: missing #root element')
 const app = <App pathname={window.location.pathname} />
 let root = globalThis.__caioRoot
 

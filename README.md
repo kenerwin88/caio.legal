@@ -12,11 +12,10 @@ npm run dev
 ## Production build
 
 ```sh
-npm run build
-npm run verify:build
+npm run check
 ```
 
-The build creates fully rendered static HTML for the homepage, about page, field notes, and the custom 404 page in `dist/`. JavaScript hydrates the rendered pages for interactive behavior.
+The check runs linting and type checking, then creates and verifies fully rendered static HTML for the homepage, about page, briefings, articles, and custom 404 page in `dist/`. JavaScript hydrates the rendered pages for interactive behavior.
 
 ## Deployment
 
@@ -29,13 +28,12 @@ Production hosting is Cloudflare Pages.
 
 `public/_headers` preserves the site's security headers and immutable asset caching. `public/_redirects` normalizes trailing slashes. Cloudflare serves the generated top-level `404.html` for unknown routes.
 
-Every production change should pass both commands before deployment:
+Every production change should pass the full quality gate before deployment:
 
 ```sh
-npm run build
-npm run verify:build
+npm run check
 ```
 
 ## Content
 
-Homepage copy and article content live in `src/main.tsx`. Design tokens and responsive styles live in `src/styles.css`.
+Page components live in `src/app.tsx`, shared article and metadata content lives in `src/site-data.ts`, and the browser entry point lives in `src/main.tsx`. Design tokens and responsive styles live in `src/styles.css`.

@@ -2,35 +2,30 @@ import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
+import {
+  escapeHtmlAttribute,
+  escapeHtmlText,
+  escapeXml,
+  outputFileForPath,
+} from './prerender-utils.mjs'
+
 const root = resolve('dist')
 const serverRoot = resolve('.ssr-dist')
 const verificationRoot = resolve('.build-artifacts')
 const shell = await readFile(resolve(root, 'index.html'), 'utf8')
 const { contentManifest, render, routeMetadata, siteUrl, structuredDataForPath } = await import(pathToFileURL(resolve(serverRoot, 'entry-server.js')).href)
 
-function escapeAttribute(value) {
-  return value.replaceAll('&', '&amp;').replaceAll('"', '&quot;')
-}
-
-function escapeXml(value) {
-  return escapeAttribute(value).replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll("'", '&apos;')
-}
-
 function replaceMeta(html, attribute, name, content) {
   const pattern = new RegExp(`<meta\\s+${attribute}="${name}"\\s+content="[^"]*"\\s*\\/>`)
-  return html.replace(pattern, `<meta ${attribute}="${name}" content="${escapeAttribute(content)}" />`)
+  return html.replace(pattern, `<meta ${attribute}="${name}" content="${escapeHtmlAttribute(content)}" />`)
 }
 
 for (const page of routeMetadata) {
   const rendered = render(page.pathname)
-  const output = page.pathname === '/'
-    ? 'index.html'
-    : page.pathname === '/404'
-      ? '404.html'
-      : `${page.pathname.slice(1)}.html`
+  const output = outputFileForPath(page.pathname)
   const outputPath = resolve(root, output)
   let html = shell
-    .replace(/<title>[^<]*<\/title>/, `<title>${escapeAttribute(page.title)}</title>`)
+    .replace(/<title>[^<]*<\/title>/, `<title>${escapeHtmlText(page.title)}</title>`)
     .replace('<div id="root"></div>', `<div id="root">${rendered}</div>`)
 
   html = replaceMeta(html, 'name', 'description', page.description)
