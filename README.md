@@ -36,4 +36,6 @@ npm run check
 
 ## Content
 
-Page components live in `src/app.tsx`, shared article and metadata content lives in `src/site-data.ts`, and the browser entry point lives in `src/main.tsx`. Design tokens and responsive styles live in `src/styles.css`.
+Briefings are ordinary Markdown files in `content/articles/`; see `content/README.md` for the authoring template and source-link syntax. The build validates their YAML front matter and turns them into prerendered article pages with SEO metadata, JSON-LD, sitemap entries, citations, and highlighted authority links.
+
+Page components live in `src/app.tsx`, shared site metadata lives in `src/site-data.ts`, and the browser entry point lives in `src/main.tsx`. Design tokens and responsive styles live in `src/styles.css`.

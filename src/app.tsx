@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState, type ComponentPropsWithoutRef } from 'react'
+import Markdown from 'markdown-to-jsx'
 import {
   calendlyUrl,
   contactEmail,
+  articleImagePaths,
   essaysByNewest,
   formatDate,
   homepageEssays,
@@ -9,6 +11,18 @@ import {
   siteUrl,
   type Essay,
 } from './site-data'
+
+function ArticleMarkdownLink({ title, ...props }: ComponentPropsWithoutRef<'a'>) {
+  if (title !== 'Primary authority') return <a title={title} {...props} />
+  return <a {...props} className="inline-authority" target="_blank" rel="noreferrer" />
+}
+
+const articleMarkdownOptions = {
+  disableParsingRawHTML: true,
+  overrides: {
+    a: { component: ArticleMarkdownLink },
+  },
+} as const
 
 function setMetaContent(selector: string, content: string) {
   document.querySelector(selector)?.setAttribute('content', content)
@@ -680,6 +694,52 @@ function ArticleShare({ essay }: { essay: Essay }) {
   )
 }
 
+function ArticleToc({
+  sections,
+  placement,
+}: {
+  sections: Array<{ id: string; label: string }>
+  placement: 'desktop' | 'mobile'
+}) {
+  const titleId = `article-toc-title-${placement}`
+  return (
+    <nav className={`article-toc article-toc-${placement}`} aria-labelledby={titleId}>
+      <span id={titleId}>In this briefing</span>
+      <ol>
+        {sections.map((section) => (
+          <li key={section.id}>
+            <a className="article-toc-link" href={`#${section.id}`}>{section.label}</a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+}
+
+function ArticleVisual({ essay }: { essay: Essay }) {
+  const image = articleImagePaths(essay)
+  return (
+    <figure className="article-visual">
+      <picture>
+        <source srcSet={image.socialAvif} type="image/avif" />
+        <source srcSet={image.socialWebp} type="image/webp" />
+        <img
+          src={image.social}
+          alt={essay.image.alt}
+          width="1200"
+          height="630"
+          loading="lazy"
+          decoding="async"
+        />
+      </picture>
+      <figcaption>
+        <span>Visual brief</span>
+        {essay.image.caption}
+      </figcaption>
+    </figure>
+  )
+}
+
 function Home() {
   useEffect(() => {
     updateDocumentMetadata('/')
@@ -727,6 +787,9 @@ function Home() {
 
 function ArticlePage({ essay }: { essay: Essay }) {
   const [readingProgress, setReadingProgress] = useState(0)
+  const sectionLinks = essay.body.flatMap((section) => (
+    section.id && section.heading ? [{ id: section.id, label: section.heading }] : []
+  ))
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -775,22 +838,61 @@ function ArticlePage({ essay }: { essay: Essay }) {
         </header>
         <article className="article-body">
           <aside>
-            <span>Author</span>
-            <strong><a href="/about">Ken Erwin</a></strong>
-            <span>AI leadership advisor for law firms</span>
-            <span className="author-credentials">AWS Professional Services · Founder, LogicPearl and ParaLocker</span>
-            <span className="article-aside-date">Published</span>
-            <time className="article-aside-date" dateTime={essay.published}>{formatDate(essay.published)}</time>
+            <div className="article-byline">
+              <span>Author</span>
+              <strong><a href="/about">Ken Erwin</a></strong>
+              <span>AI leadership advisor for law firms</span>
+              <span className="author-credentials">AWS Professional Services · Founder, LogicPearl and ParaLocker</span>
+              <span className="article-aside-date">Published</span>
+              <time className="article-aside-date" dateTime={essay.published}>{formatDate(essay.published)}</time>
+            </div>
+            {sectionLinks.length > 0 && (
+              <ArticleToc sections={sectionLinks} placement="desktop" />
+            )}
           </aside>
           <div className="article-prose">
             {essay.body.map((section, index) => (
-              <section key={index}>
-                {section.heading && <h2>{section.heading}</h2>}
-                {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-              </section>
+              <Fragment key={section.id ?? `introduction-${index}`}>
+                <section>
+                  {section.heading && <h2 id={section.id}>{section.heading}</h2>}
+                  <Markdown options={articleMarkdownOptions}>{section.markdown}</Markdown>
+                  {section.references && (
+                    <div className="authority-links" role="note" aria-label={`Primary sources for ${section.heading ?? 'this section'}`}>
+                      <div className="authority-links-head">
+                        <span>Read the authority</span>
+                        <span>{section.references.length} {section.references.length === 1 ? 'source' : 'sources'}</span>
+                      </div>
+                      <ul>
+                        {section.references.map((source) => (
+                          <li key={source.url}>
+                            <a
+                              className="authority-link"
+                              href={source.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              aria-label={`${source.title}, ${source.publisher} (opens in a new tab)`}
+                            >
+                              <span>
+                                <strong>{source.title}</strong>
+                                <small>{source.publisher}</small>
+                              </span>
+                              <span className="authority-link-arrow" aria-hidden="true">↗</span>
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </section>
+                {index === 0 && sectionLinks.length > 0 && (
+                  <ArticleToc sections={sectionLinks} placement="mobile" />
+                )}
+                {index === 0 && <ArticleVisual essay={essay} />}
+              </Fragment>
             ))}
             <section className="article-sources" aria-labelledby="sources-title">
-              <h2 id="sources-title">Primary sources</h2>
+              <h2 id="sources-title">Full source record</h2>
+              <p>Every authority used in this briefing, collected in one place.</p>
               <ol>
                 {essay.sources.map((source) => (
                   <li key={source.url}>

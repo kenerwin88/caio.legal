@@ -1,46 +1,13 @@
-export type Essay = {
-  slug: string
-  type: string
-  title: string
-  seoTitle: string
-  deck: string
-  seoDescription: string
-  readTime: string
-  published: string
-  modified: string
-  sources: Source[]
-  body: { heading?: string; paragraphs: string[] }[]
-}
+import { essays } from './article-content'
+import type { Essay } from './content-types'
 
-type Source = {
-  title: string
-  publisher: string
-  url: string
-}
-
-const abaGenerativeAiOpinion: Source = {
-  title: 'Formal Opinion 512: Generative Artificial Intelligence Tools',
-  publisher: 'American Bar Association Standing Committee on Ethics and Professional Responsibility',
-  url: 'https://www.americanbar.org/content/dam/aba/administrative/professional_responsibility/ethics-opinions/aba-formal-opinion-512.pdf',
-}
-
-const nistGenerativeAiProfile: Source = {
-  title: 'Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile',
-  publisher: 'National Institute of Standards and Technology',
-  url: 'https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf',
-}
-
-const nistAiRmfPlaybook: Source = {
-  title: 'NIST AI Risk Management Framework Playbook',
-  publisher: 'National Institute of Standards and Technology',
-  url: 'https://www.nist.gov/itl/ai-risk-management-framework/nist-ai-rmf-playbook',
-}
+export type { Essay } from './content-types'
 
 export const calendlyUrl = 'https://calendly.com/kenerwin/30min'
 export const contactEmail = 'ken@caio.legal'
 export const siteUrl = 'https://caio.legal'
+const sitePublishedDate = '2026-07-17'
 
-const publishedDate = '2026-07-17'
 const longDateFormatter = new Intl.DateTimeFormat('en-US', {
   month: 'long',
   day: 'numeric',
@@ -59,165 +26,24 @@ export function formatDate(date: string, format: 'long' | 'short' = 'long') {
   return formatter.format(new Date(`${date}T12:00:00Z`))
 }
 
-const essays: Essay[] = [
-  {
-    slug: 'your-best-ai-work-is-probably-hidden',
-    type: 'Leadership',
-    title: 'Your firm’s best AI workflow may already exist—and no one else knows about it',
-    seoTitle: 'Turn Hidden AI Workflows Into Firm Capability | caio.legal',
-    deck: 'The gap is rarely curiosity. It is the leadership needed to discover, test, and scale what one lawyer or paralegal has learned.',
-    seoDescription: 'Discover hidden AI workflows inside your law firm, evaluate their risks, and turn individual experimentation into governed, reusable institutional capability.',
-    readTime: '6 min read',
-    published: publishedDate,
-    modified: publishedDate,
-    sources: [abaGenerativeAiOpinion, nistGenerativeAiProfile],
-    body: [
-      {
-        paragraphs: [
-          'Nearly every law firm already has an AI adoption curve hiding inside it. Some people have not begun. Others are testing ChatGPT or Claude, sometimes through personal accounts the firm cannot see. And one lawyer, paralegal, or technically curious staff member is often far ahead—quietly using AI to improve a recurring part of the work.',
-          'That unevenness is not evidence that the firm lacks interest. It is evidence that experimentation has outrun leadership. Useful techniques remain personal, risks remain inconsistent, and the firm receives little institutional value from what its strongest users have learned.',
-        ],
-      },
-      {
-        heading: 'A power user is not an operating model',
-        paragraphs: [
-          'A strong individual workflow can create real value, but it is fragile. It may depend on one person’s prompt history, personal account, undocumented judgment, or willingness to help colleagues between matters. If that person leaves, gets busy, or misunderstands a risk, the firm has no durable capability to fall back on.',
-          'The goal is not to suppress experimentation. It is to create a path by which good experiments become visible, reviewable, teachable, and safe enough for others to use.',
-        ],
-      },
-      {
-        heading: 'Start with the work, not the tool',
-        paragraphs: [
-          'AI leadership begins by listening to the people closest to the workflow. What do paralegals repeatedly assemble, compare, extract, or chase? Where do associates lose time moving between sources? Which first drafts, chronologies, reviews, or client updates already benefit from AI? Who has found a better method, and what judgment makes it work?',
-          'The leader’s job is to map the inputs, decisions, review points, source material, and failure modes around that method. A clever prompt is not yet a firm workflow. It becomes one only when the firm can explain when to use it, which tools and information are permitted, how output is checked, and who owns the result.',
-        ],
-      },
-      {
-        heading: 'Turn local learning into firm capability',
-        paragraphs: [
-          'Once a workflow proves useful, capture more than the prompt. Preserve the technique, approved tools, examples, source requirements, review standard, and known limits. Train the people who perform that work, identify internal champions, and give them a place to share improvements without creating a new shadow system.',
-          'Not every lawyer needs to use AI identically. Practice groups differ, matters differ, and professional judgment remains personal. But the firm should have a shared baseline, reusable patterns, and a governed path for turning individual learning into collective advantage.',
-        ],
-      },
-      {
-        heading: 'That is the leadership gap',
-        paragraphs: [
-          'Tools do not discover the best work inside a firm. A policy does not spread it. A training session cannot sustain it by itself. Someone must connect the people experimenting, the workflows worth improving, the risks the firm must control, and the operating habits that make learning repeatable.',
-          'The firms that pull ahead will not simply have more AI users. They will get better at learning from their best ones.',
-        ],
-      },
-    ],
-  },
-  {
-    slug: 'ai-policy-is-not-an-adoption-strategy',
-    type: 'Governance',
-    title: 'Your AI policy is not an adoption strategy',
-    seoTitle: 'AI Policy Is Not an Adoption Strategy | caio.legal',
-    deck: 'A policy can establish boundaries. It cannot teach a practice group how to change the work.',
-    seoDescription: 'An AI policy sets boundaries, but law firm adoption requires workflow design, ownership, testing, training, and a practical path from permission to practice.',
-    readTime: '6 min read',
-    published: publishedDate,
-    modified: publishedDate,
-    sources: [abaGenerativeAiOpinion, nistAiRmfPlaybook],
-    body: [
-      {
-        paragraphs: [
-          'Most law firms began their AI work in the right place: protecting clients. They formed committees, reviewed tools, and published rules about confidential information. That work matters. But many firms are now asking a policy document to do a second job it was never designed to do.',
-          'A policy tells people where the boundaries are. Adoption requires people to see a better way to complete a specific piece of work, trust the new method, and know who will help when it fails. Those are different conditions, owned by different people.',
-        ],
-      },
-      {
-        heading: 'The gap between permission and practice',
-        paragraphs: [
-          'When a firm approves a tool, it has answered a risk question. It has not answered a workflow question. Lawyers still need to decide where the tool belongs, how its output will be checked, whether the economics make sense, and how the result should be explained to a client.',
-          'That is why broad training sessions often produce a burst of experimentation followed by quiet reversion. The tool was introduced, but the work was not redesigned.',
-        ],
-      },
-      {
-        heading: 'Build adoption around matters, not features',
-        paragraphs: [
-          'Start with one recurring task inside one willing team. Describe the current method, including review points and failure modes. Then test whether AI can improve speed, quality, consistency, or lawyer experience without weakening judgment. A useful pilot ends with a documented way of working—not a list of prompts.',
-          'The firms that move well will treat governance and adoption as connected disciplines. Policy sets the perimeter. Practice leaders, knowledge teams, technologists, and lawyers build the path inside it.',
-        ],
-      },
-    ],
-  },
-  {
-    slug: 'billable-hour-is-not-the-first-change',
-    type: 'Firm economics',
-    title: 'The billable hour is not the first thing AI changes',
-    seoTitle: 'How AI Changes Law Firm Economics Before Billing | caio.legal',
-    deck: 'Before AI changes the pricing model, it changes who knows how the work actually gets done.',
-    seoDescription: 'Before AI changes the billable hour, it exposes how legal work gets done. Learn why process visibility and client value should come before pricing redesign.',
-    readTime: '7 min read',
-    published: publishedDate,
-    modified: publishedDate,
-    sources: [abaGenerativeAiOpinion, nistGenerativeAiProfile],
-    body: [
-      {
-        paragraphs: [
-          'Conversations about AI and law-firm economics tend to leap straight to the billable hour. It is a compelling question, but it skips the more immediate shift already underway: firms are discovering how little of their production system has been made explicit.',
-          'Ask how a strong first draft becomes a client-ready document and the answer often lives across habits, precedents, inboxes, and the judgment of a few trusted people. AI exposes that hidden system because a tool cannot reliably assist with a process the firm cannot describe.',
-        ],
-      },
-      {
-        heading: 'The first constraint is legibility',
-        paragraphs: [
-          'To automate or accelerate part of a matter, a team must name the inputs, decisions, handoffs, and standards that shape the output. This is not merely process mapping. It is the work of turning tacit expertise into a shared operating method without pretending judgment can be reduced to a checklist.',
-          'That exercise changes where the firm sees value. The scarce resource may not be hours. It may be a partner’s review, a knowledge lawyer’s pattern recognition, or a client’s confidence that the team understands the commercial consequence.',
-        ],
-      },
-      {
-        heading: 'Price after you understand value',
-        paragraphs: [
-          'A firm should not redesign pricing from an abstract prediction about AI efficiency. It should first learn where time is removed, where new review is added, and whether the client experiences a better outcome. That evidence creates a serious conversation about scope and value.',
-          'The economic question is coming. But the firms best positioned to answer it will be the ones that can see their own work clearly enough to know what changed.',
-        ],
-      },
-    ],
-  },
-  {
-    slug: 'what-a-fractional-ai-leader-owns',
-    type: 'Leadership',
-    title: 'What a fractional AI leader should own in a law firm',
-    seoTitle: 'What a Fractional AI Leader Owns in a Law Firm | caio.legal',
-    deck: 'Not the tools. The decisions that connect strategy, professional duty, and daily practice.',
-    seoDescription: 'A fractional AI leader should own strategy, governance, vendor decisions, pilots, adoption, and the transition to permanent internal capability in a law firm.',
-    readTime: '5 min read',
-    published: publishedDate,
-    modified: publishedDate,
-    sources: [abaGenerativeAiOpinion, nistAiRmfPlaybook],
-    body: [
-      {
-        paragraphs: [
-          'A fractional AI leader should not become the firm’s most expensive prompt engineer. The role exists to create decision capacity while the firm builds the permanent leadership, governance, and operating habits it will eventually need.',
-          'That means owning a coherent agenda across stakeholders who naturally see different parts of the problem: executive leadership, risk, IT, knowledge, innovation, talent, finance, and practice groups.',
-        ],
-      },
-      {
-        heading: 'A decision system, not a tool list',
-        paragraphs: [
-          'The work begins with a view of where the firm is trying to go and which constraints are real. From there, the leader should establish how opportunities are selected, how vendors are evaluated, how pilots graduate, and how learning is captured. Every initiative needs a business owner and a defined operational outcome.',
-          'The role should also make tradeoffs visible. A tool may be technically capable but difficult to govern. A safe use case may have no meaningful adoption path. A popular experiment may not matter to clients or the firm’s strategy. Leadership is the act of naming those tensions early.',
-        ],
-      },
-      {
-        heading: 'The exit is part of the assignment',
-        paragraphs: [
-          'Fractional leadership succeeds when the firm becomes less dependent on it. The engagement should leave behind a prioritized portfolio, clear decision rights, trained internal owners, and a rhythm for reviewing evidence.',
-          'AI will keep moving. The durable advantage is not knowing today’s tools. It is giving the firm a better way to decide what to do next.',
-        ],
-      },
-    ],
-  },
-]
-
-export const essaysByNewest = [...essays].sort((a, b) => b.published.localeCompare(a.published))
+export const essaysByNewest = [...essays].sort((a, b) =>
+  b.published.localeCompare(a.published) || b.priority - a.priority,
+)
 export const homepageEssays = essaysByNewest.slice(0, 4)
 const latestBriefingModifiedDate = essaysByNewest.reduce(
   (latest, essay) => essay.modified > latest ? essay.modified : latest,
-  publishedDate,
+  '1970-01-01',
 )
+
+export function articleImagePaths(essay: Essay) {
+  return {
+    social: `${essay.image.base}-1200x630.png`,
+    socialWebp: `${essay.image.base}-1200x630.webp`,
+    socialAvif: `${essay.image.base}-1200x630.avif`,
+    fourByThree: `${essay.image.base}-1200x900.png`,
+    square: `${essay.image.base}-1200x1200.png`,
+  }
+}
 
 export const contentManifest = {
   articles: essaysByNewest.map((essay) => ({
@@ -229,7 +55,13 @@ export const contentManifest = {
     seoDescription: essay.seoDescription,
     published: essay.published,
     modified: essay.modified,
+    image: {
+      ...articleImagePaths(essay),
+      alt: essay.image.alt,
+      caption: essay.image.caption,
+    },
     sources: essay.sources,
+    inlineSources: [...new Set(essay.body.flatMap((section) => section.references ?? []).map((source) => source.url))],
   })),
   homepageArticlePaths: homepageEssays.map((essay) => `/notes/${essay.slug}`),
 }
@@ -361,8 +193,8 @@ export const routeMetadata: RouteMetadata[] = [
     description: essay.seoDescription,
     type: 'article' as const,
     canonical: `${siteUrl}/notes/${essay.slug}`,
-    image: socialImageUrl,
-    imageAlt: socialImageAlt,
+    image: `${siteUrl}${articleImagePaths(essay).social}`,
+    imageAlt: essay.image.alt,
     published: essay.published,
     modified: essay.modified,
     lastModified: essay.modified,
@@ -375,7 +207,7 @@ export const routeMetadata: RouteMetadata[] = [
     canonical: `${siteUrl}/about`,
     image: socialImageUrl,
     imageAlt: socialImageAlt,
-    lastModified: publishedDate,
+    lastModified: sitePublishedDate,
   },
   {
     pathname: '/404',
@@ -447,7 +279,7 @@ export function structuredDataForPath(pathname: string): SchemaNode | null {
           description: aboutDescription,
           isPartOf: { '@id': websiteId },
           mainEntity: { '@id': personId },
-          dateModified: publishedDate,
+          dateModified: sitePublishedDate,
           inLanguage: 'en-US',
         },
         ...commonSchemaGraph(),
@@ -460,8 +292,9 @@ export function structuredDataForPath(pathname: string): SchemaNode | null {
   if (!essay) return null
 
   const canonical = `${siteUrl}/notes/${essay.slug}`
+  const imagePaths = articleImagePaths(essay)
   const wordCount = essay.body
-    .flatMap((section) => section.paragraphs)
+    .map((section) => section.markdown)
     .join(' ')
     .trim()
     .split(/\s+/).length
@@ -481,12 +314,29 @@ export function structuredDataForPath(pathname: string): SchemaNode | null {
         publisher: { '@id': organizationId },
         isPartOf: { '@id': websiteId },
         mainEntityOfPage: canonical,
-        image: {
-          '@type': 'ImageObject',
-          url: socialImageUrl,
-          width: 1200,
-          height: 630,
-        },
+        image: [
+          {
+            '@type': 'ImageObject',
+            url: `${siteUrl}${imagePaths.social}`,
+            width: 1200,
+            height: 630,
+            caption: essay.image.caption,
+          },
+          {
+            '@type': 'ImageObject',
+            url: `${siteUrl}${imagePaths.fourByThree}`,
+            width: 1200,
+            height: 900,
+            caption: essay.image.caption,
+          },
+          {
+            '@type': 'ImageObject',
+            url: `${siteUrl}${imagePaths.square}`,
+            width: 1200,
+            height: 1200,
+            caption: essay.image.caption,
+          },
+        ],
         articleSection: essay.type,
         wordCount,
         inLanguage: 'en-US',
